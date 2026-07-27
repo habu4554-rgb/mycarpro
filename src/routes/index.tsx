@@ -263,23 +263,58 @@ function Home() {
                 <div className="absolute top-4 right-4 rounded-full bg-primary text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1">
                   {p.badge}
                 </div>
-              <div className="h-32 rounded-2xl bg-gradient-to-br from-blush via-muted to-white mb-5 grid place-items-center">
+                <div className="h-32 rounded-2xl bg-gradient-to-br from-blush via-muted to-white mb-5 grid place-items-center">
                   <span className="font-display italic text-primary/40 text-5xl">🥛</span>
                 </div>
                 <h3 className="font-display italic text-2xl text-secondary mb-1">{p.name}</h3>
                 <div className="text-xl font-bold text-primary mb-2">{p.price}</div>
-                <p className="text-sm text-secondary/70 leading-relaxed mb-5">{p.desc}</p>
-                <button
-                  onClick={() => {
-                    setSelectedProduct(p.name);
-                    scrollTo("order");
-                  }}
-                  className="w-full rounded-full bg-primary/10 text-primary font-semibold text-sm py-2.5 hover:bg-primary hover:text-white transition"
-                >
-                  Order This
-                </button>
+                <p className="text-sm text-secondary/70 leading-relaxed">{p.desc}</p>
               </div>
             ))}
+          </div>
+
+          {/* Quantity selector near menu */}
+          <div className="mt-14 max-w-3xl mx-auto">
+            <div className="rounded-3xl bg-white p-6 md:p-8 shadow-lg border border-primary/10">
+              <h3 className="font-display italic text-2xl md:text-3xl text-secondary text-center mb-2">Select Your Cups</h3>
+              <p className="text-center text-sm text-secondary/70 mb-6">Choose quantities for each product — your running total updates automatically.</p>
+              <div className="grid gap-3">
+                {PRODUCTS.map((p) => {
+                  const qty = quantities[p.name] || 0;
+                  const lineTotal = priceMap[p.name] * qty;
+                  return (
+                    <div key={p.name} className="flex items-center justify-between gap-3 rounded-xl border border-primary/15 bg-blush/30 p-3">
+                      <div className="min-w-0 flex-1">
+                        <div className="font-semibold text-secondary text-sm truncate">{p.name}</div>
+                        <div className="text-xs text-primary font-bold">
+                          {formatNaira(priceMap[p.name])}
+                          {qty > 0 && <span className="text-secondary/60 font-normal"> · Subtotal {formatNaira(lineTotal)}</span>}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <button type="button" onClick={() => setQty(p.name, qty - 1)} className="h-9 w-9 rounded-full bg-white border border-primary/30 text-primary font-bold hover:bg-primary hover:text-white transition" aria-label={`Decrease ${p.name}`}>−</button>
+                        <span className="w-8 text-center font-bold text-secondary">{qty}</span>
+                        <button type="button" onClick={() => setQty(p.name, qty + 1)} className="h-9 w-9 rounded-full bg-white border border-primary/30 text-primary font-bold hover:bg-primary hover:text-white transition" aria-label={`Increase ${p.name}`}>+</button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="mt-5 flex items-center justify-between rounded-xl bg-primary/10 px-4 py-3">
+                <span className="text-sm font-semibold text-secondary uppercase tracking-wider">Total</span>
+                <span className="text-2xl font-bold text-primary">{formatNaira(total)}</span>
+              </div>
+              <p className="mt-3 text-center text-xs text-secondary/60">Enter 0 for products you don&apos;t want</p>
+              <div className="mt-6 text-center">
+                <button
+                  onClick={() => scrollTo("order")}
+                  disabled={total === 0}
+                  className="rounded-full bg-primary px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-primary/30 hover:brightness-110 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Continue to Order{total > 0 ? ` · ${formatNaira(total)}` : ""}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -368,31 +403,23 @@ function Home() {
                   </Field>
                 )}
 
-                <div>
-                  <span className="block text-xs uppercase tracking-widest text-secondary/70 font-semibold mb-3">Select Products & Quantities</span>
-                  <div className="grid gap-3">
-                    {PRODUCTS.map((p) => {
-                      const qty = quantities[p.name] || 0;
-                      const lineTotal = priceMap[p.name] * qty;
-                      return (
-                        <div key={p.name} className="flex items-center justify-between gap-3 rounded-xl border border-primary/15 bg-blush/30 p-3">
-                          <div className="min-w-0 flex-1">
-                            <div className="font-semibold text-secondary text-sm truncate">{p.name}</div>
-                            <div className="text-xs text-primary font-bold">
-                              {formatNaira(priceMap[p.name])}
-                              {qty > 0 && <span className="text-secondary/60 font-normal"> · Subtotal {formatNaira(lineTotal)}</span>}
-                            </div>
+                <div className="rounded-xl border border-primary/15 bg-blush/30 p-4">
+                  <span className="block text-xs uppercase tracking-widest text-secondary/70 font-semibold mb-3">Your Order Summary</span>
+                  {Object.entries(quantities).filter(([, q]) => q > 0).length === 0 ? (
+                    <p className="text-sm text-secondary/60 italic">No products selected yet. Go back to the menu to choose your cups.</p>
+                  ) : (
+                    <div className="grid gap-2">
+                      {Object.entries(quantities)
+                        .filter(([, q]) => q > 0)
+                        .map(([name, qty]) => (
+                          <div key={name} className="flex items-center justify-between text-sm">
+                            <span className="text-secondary">{name} <span className="text-secondary/60">× {qty}</span></span>
+                            <span className="font-semibold text-primary">{formatNaira(priceMap[name] * qty)}</span>
                           </div>
-                          <div className="flex items-center gap-2 shrink-0">
-                            <button type="button" onClick={() => setQty(p.name, qty - 1)} className="h-9 w-9 rounded-full bg-white border border-primary/30 text-primary font-bold hover:bg-primary hover:text-white transition" aria-label={`Decrease ${p.name}`}>−</button>
-                            <span className="w-8 text-center font-bold text-secondary">{qty}</span>
-                            <button type="button" onClick={() => setQty(p.name, qty + 1)} className="h-9 w-9 rounded-full bg-white border border-primary/30 text-primary font-bold hover:bg-primary hover:text-white transition" aria-label={`Increase ${p.name}`}>+</button>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <div className="mt-4 flex items-center justify-between rounded-xl bg-primary/10 px-4 py-3">
+                        ))}
+                    </div>
+                  )}
+                  <div className="mt-3 pt-3 border-t border-primary/10 flex items-center justify-between">
                     <span className="text-sm font-semibold text-secondary uppercase tracking-wider">Total</span>
                     <span className="text-2xl font-bold text-primary">{formatNaira(total)}</span>
                   </div>
