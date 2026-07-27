@@ -2,11 +2,9 @@
 @source "../src";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
-
 @theme inline {
-  --font-display: "Oswald", sans-serif;
-  --font-sans: "Inter", sans-serif;
+  --font-display: "Playfair Display", serif;
+  --font-sans: "Poppins", sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -15,8 +13,6 @@
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
@@ -25,56 +21,38 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-gold: var(--gold);
-  --color-gold-glow: var(--gold-glow);
-  --color-surface: var(--surface);
+  --color-blush: var(--blush);
+  --color-rose: var(--rose);
+  --color-whatsapp: var(--whatsapp);
 }
 
 :root {
-  --radius: 0.5rem;
-  --background: oklch(0.14 0.005 260);
-  --foreground: oklch(0.96 0.005 260);
-  --surface: oklch(0.18 0.006 260);
-  --card: oklch(0.19 0.006 260);
-  --card-foreground: oklch(0.96 0.005 260);
-  --popover: oklch(0.19 0.006 260);
-  --popover-foreground: oklch(0.96 0.005 260);
-  --primary: oklch(0.78 0.14 82);
-  --primary-foreground: oklch(0.14 0.005 260);
-  --secondary: oklch(0.24 0.006 260);
-  --secondary-foreground: oklch(0.96 0.005 260);
-  --muted: oklch(0.22 0.006 260);
-  --muted-foreground: oklch(0.68 0.01 260);
-  --accent: oklch(0.78 0.14 82);
-  --accent-foreground: oklch(0.14 0.005 260);
-  --destructive: oklch(0.6 0.22 25);
-  --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.28 0.006 260);
-  --input: oklch(0.24 0.006 260);
-  --ring: oklch(0.78 0.14 82);
-  --gold: oklch(0.82 0.15 85);
-  --gold-glow: oklch(0.9 0.16 90);
-  --gradient-gold: linear-gradient(135deg, var(--gold) 0%, var(--gold-glow) 100%);
-  --gradient-hero: linear-gradient(180deg, oklch(0.1 0.005 260 / 0.6) 0%, oklch(0.1 0.005 260 / 0.95) 100%);
-  --shadow-gold: 0 20px 60px -20px oklch(0.78 0.14 82 / 0.4);
-}
-
-.dark {
-  color-scheme: dark;
+  --radius: 0.75rem;
+  --background: #FDE8F0;
+  --foreground: #5C0A2E;
+  --card: #FFFFFF;
+  --card-foreground: #5C0A2E;
+  --primary: #E91E8C;
+  --primary-foreground: #FFFFFF;
+  --secondary: #8B1A4A;
+  --secondary-foreground: #FFFFFF;
+  --muted: #FCD5E4;
+  --muted-foreground: #8B1A4A;
+  --accent: #FFFFFF;
+  --accent-foreground: #5C0A2E;
+  --border: #F5C0D5;
+  --input: #F5C0D5;
+  --ring: #E91E8C;
+  --blush: #FDE8F0;
+  --rose: #8B1A4A;
+  --whatsapp: #25D366;
 }
 
 @layer base {
-  * {
-    border-color: var(--color-border);
-  }
-  html {
-    color-scheme: dark;
-  }
+  * { border-color: var(--color-border); }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
@@ -83,22 +61,6 @@
   }
   h1, h2, h3, h4 {
     font-family: var(--font-display);
-    letter-spacing: -0.01em;
   }
-}
-
-@utility text-gradient-gold {
-  background: var(--gradient-gold);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-}
-
-@utility bg-gradient-gold {
-  background: var(--gradient-gold);
-}
-
-@utility shadow-gold {
-  box-shadow: var(--shadow-gold);
+  html { scroll-behavior: smooth; }
 }
