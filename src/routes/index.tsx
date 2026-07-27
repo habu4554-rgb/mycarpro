@@ -22,23 +22,27 @@ const PHONE = "+234 701 690 2642";
 const PRODUCTS = [
   {
     name: "Yogofura",
+    price: "₦2,400",
     desc: "A rich blend of creamy yoghurt and traditional Hausa fura. The perfect healthy indulgence.",
     badge: "Best Seller",
   },
   {
+    name: "Plain Sweetened Yoghurt",
+    price: "₦2,300",
+    desc: "Silky smooth, lightly sweetened and perfectly fresh. Simple and nourishing.",
+    badge: "Classic",
+  },
+  {
     name: "Greek Yogurt",
-    desc: "Thick, smooth and protein-rich. Our Greek yoghurt is made fresh with no preservatives.",
+    price: "₦4,000",
+    desc: "Thick, smooth and protein-rich, made fresh with no preservatives.",
     badge: "High Protein",
   },
   {
     name: "Parfait",
+    price: "₦6,000",
     desc: "Layered goodness of yoghurt, granola and fruits. A treat that's as beautiful as it is delicious.",
     badge: "Fan Favourite",
-  },
-  {
-    name: "Plain Sweetened Yoghurt",
-    desc: "Silky smooth, lightly sweetened and perfectly fresh. Simple and nourishing.",
-    badge: "Classic",
   },
 ];
 
