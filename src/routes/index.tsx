@@ -62,22 +62,79 @@ function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [sent, setSent] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState("Yogofura");
+  const [quantities, setQuantities] = useState<Record<string, number>>({
+    Yogofura: 0,
+    "Plain Sweetened Yoghurt": 0,
+    "Greek Yogurt": 0,
+    Parfait: 0,
+  });
+  const [fulfilment, setFulfilment] = useState<"Delivery" | "Pickup">("Delivery");
+
+  const priceMap: Record<string, number> = {
+    Yogofura: 2400,
+    "Plain Sweetened Yoghurt": 2300,
+    "Greek Yogurt": 4000,
+    Parfait: 6000,
+  };
+
+  const total = Object.entries(quantities).reduce(
+    (sum, [name, qty]) => sum + (priceMap[name] || 0) * (qty || 0),
+    0,
+  );
+
+  const formatNaira = (n: number) => `₦${n.toLocaleString("en-NG")}`;
+
+  const setQty = (name: string, val: number) =>
+    setQuantities((q) => ({ ...q, [name]: Math.max(0, val || 0) }));
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
     const data = new FormData(form);
+
+    const items = Object.entries(quantities).filter(([, q]) => q > 0);
+    if (items.length === 0) return;
+
+    items.forEach(([n, q]) => data.append(`${n} (qty)`, String(q)));
+    data.append("Total", formatNaira(total));
+    data.append("Fulfilment", fulfilment);
+
+    const name = String(data.get("name") || "");
+    const phone = String(data.get("phone") || "");
+    const address = String(data.get("address") || "");
+    const deliveryDate = String(data.get("delivery_date") || "");
+    const pickupTime = String(data.get("pickup_time") || "");
+    const notes = String(data.get("notes") || "");
+
+    const lines = [
+      `*New Order — The Creamy Spot*`,
+      `Name: ${name}`,
+      `Phone: ${phone}`,
+      `Type: ${fulfilment}`,
+      fulfilment === "Delivery" ? `Address: ${address}` : `Pickup Time: ${pickupTime}`,
+      `Date: ${deliveryDate}`,
+      ``,
+      `Order:`,
+      ...items.map(([n, q]) => `• ${n} × ${q} — ${formatNaira(priceMap[n] * q)}`),
+      ``,
+      `Total: ${formatNaira(total)}`,
+      notes ? `Notes: ${notes}` : "",
+    ].filter(Boolean);
+
+    const waUrl = `https://wa.me/2347016902642?text=${encodeURIComponent(lines.join("\n"))}`;
+
     try {
-      const res = await fetch("https://formspree.io/f/mkodkbve", {
+      await fetch("https://formspree.io/f/mkodkbve", {
         method: "POST",
         body: data,
         headers: { Accept: "application/json" },
       });
-      if (res.ok) {
-        setSent(true);
-        form.reset();
-      }
     } catch {}
+
+    setSent(true);
+    form.reset();
+    setQuantities({ Yogofura: 0, "Plain Sweetened Yoghurt": 0, "Greek Yogurt": 0, Parfait: 0 });
+    window.open(waUrl, "_blank");
   };
 
   const scrollTo = (id: string) => {
@@ -264,7 +321,8 @@ function Home() {
             {sent ? (
               <div className="text-center py-10">
                 <div className="inline-grid place-items-center h-16 w-16 rounded-full bg-primary text-white text-3xl mb-4">✓</div>
-                <p className="font-display italic text-2xl text-secondary">Thank you! We'll be in touch shortly.</p>
+                <p className="font-display italic text-2xl text-secondary">Thank you, we have received your order!</p>
+                <p className="mt-2 text-sm text-secondary/70">We've opened WhatsApp so you can confirm your order with us directly.</p>
               </div>
             ) : (
               <div className="grid gap-5">
@@ -274,25 +332,73 @@ function Home() {
                 <Field label="Phone Number">
                   <input required type="tel" name="phone" className={inputCls} placeholder="+234 ..." />
                 </Field>
-                <Field label="Delivery Address in Abuja">
-                  <textarea required name="address" rows={2} className={inputCls} placeholder="Street, area, landmark" />
+
+                <Field label="Delivery or Pickup?">
+                  <div className="grid grid-cols-2 gap-3">
+                    {(["Delivery", "Pickup"] as const).map((opt) => (
+                      <button
+                        type="button"
+                        key={opt}
+                        onClick={() => setFulfilment(opt)}
+                        className={`rounded-xl border-2 py-3 text-sm font-semibold transition ${
+                          fulfilment === opt
+                            ? "border-primary bg-primary text-white"
+                            : "border-primary/20 bg-blush/40 text-secondary hover:border-primary/50"
+                        }`}
+                      >
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                  <input type="hidden" name="fulfilment" value={fulfilment} />
                 </Field>
-                <div className="grid sm:grid-cols-2 gap-5">
-                  <Field label="Yogofura — how many cups?">
-                    <input type="number" min={0} placeholder="0" name="yogofura_qty" className={inputCls} />
+
+                {fulfilment === "Delivery" ? (
+                  <Field label="Delivery Address in Abuja">
+                    <textarea required name="address" rows={2} className={inputCls} placeholder="Street, area, landmark" />
                   </Field>
-                  <Field label="Greek Yogurt — how many cups?">
-                    <input type="number" min={0} placeholder="0" name="greek_yogurt_qty" className={inputCls} />
+                ) : (
+                  <Field label="Preferred Pickup Time">
+                    <select required name="pickup_time" defaultValue="" className={`${inputCls} appearance-none cursor-pointer`}>
+                      <option value="" disabled>Select a time slot</option>
+                      <option value="Morning 9am-12pm">Morning 9am–12pm</option>
+                      <option value="Afternoon 12pm-3pm">Afternoon 12pm–3pm</option>
+                      <option value="Evening 3pm-6pm">Evening 3pm–6pm</option>
+                    </select>
                   </Field>
-                  <Field label="Parfait — how many cups?">
-                    <input type="number" min={0} placeholder="0" name="parfait_qty" className={inputCls} />
-                  </Field>
-                  <Field label="Plain Sweetened Yoghurt — how many cups?">
-                    <input type="number" min={0} placeholder="0" name="plain_sweetened_qty" className={inputCls} />
-                  </Field>
+                )}
+
+                <div>
+                  <span className="block text-xs uppercase tracking-widest text-secondary/70 font-semibold mb-3">Select Products & Quantities</span>
+                  <div className="grid gap-3">
+                    {PRODUCTS.map((p) => {
+                      const qty = quantities[p.name] || 0;
+                      const lineTotal = priceMap[p.name] * qty;
+                      return (
+                        <div key={p.name} className="flex items-center justify-between gap-3 rounded-xl border border-primary/15 bg-blush/30 p-3">
+                          <div className="min-w-0 flex-1">
+                            <div className="font-semibold text-secondary text-sm truncate">{p.name}</div>
+                            <div className="text-xs text-primary font-bold">
+                              {formatNaira(priceMap[p.name])}
+                              {qty > 0 && <span className="text-secondary/60 font-normal"> · Subtotal {formatNaira(lineTotal)}</span>}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <button type="button" onClick={() => setQty(p.name, qty - 1)} className="h-9 w-9 rounded-full bg-white border border-primary/30 text-primary font-bold hover:bg-primary hover:text-white transition" aria-label={`Decrease ${p.name}`}>−</button>
+                            <span className="w-8 text-center font-bold text-secondary">{qty}</span>
+                            <button type="button" onClick={() => setQty(p.name, qty + 1)} className="h-9 w-9 rounded-full bg-white border border-primary/30 text-primary font-bold hover:bg-primary hover:text-white transition" aria-label={`Increase ${p.name}`}>+</button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div className="mt-4 flex items-center justify-between rounded-xl bg-primary/10 px-4 py-3">
+                    <span className="text-sm font-semibold text-secondary uppercase tracking-wider">Total</span>
+                    <span className="text-2xl font-bold text-primary">{formatNaira(total)}</span>
+                  </div>
                 </div>
-                <p className="text-xs text-secondary/60 italic -mt-2">Enter 0 for products you don't want</p>
-                <Field label="Preferred Delivery Date">
+
+                <Field label={fulfilment === "Pickup" ? "Preferred Pickup Date" : "Preferred Delivery Date"}>
                   <input required type="date" name="delivery_date" className={inputCls} />
                 </Field>
                 <Field label="Special Instructions (optional)">
@@ -300,23 +406,16 @@ function Home() {
                 </Field>
                 <button
                   type="submit"
-                  className="w-full rounded-full bg-primary py-4 text-sm font-semibold text-white shadow-lg shadow-primary/30 hover:brightness-110 transition"
+                  disabled={total === 0}
+                  className="w-full rounded-full bg-primary py-4 text-sm font-semibold text-white shadow-lg shadow-primary/30 hover:brightness-110 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Send Order
+                  Place My Order{total > 0 ? ` · ${formatNaira(total)}` : ""}
                 </button>
               </div>
             )}
           </form>
 
-          {/* Calendly placeholder */}
-          <div className="mt-10 rounded-3xl border-2 border-dashed border-primary/40 bg-white/60 p-6 md:p-8 text-center">
-            <p className="text-secondary font-medium mb-4">
-              Prefer to schedule a pickup or delivery slot? Book a time below:
-            </p>
-            <div className="rounded-2xl border border-primary/30 bg-blush/50 h-48 grid place-items-center text-secondary/60 italic">
-              Calendly embed placeholder
-            </div>
-          </div>
+
 
           {/* WhatsApp shortcut */}
           <div className="mt-8 text-center">
