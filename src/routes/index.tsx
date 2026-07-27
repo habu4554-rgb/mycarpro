@@ -139,12 +139,29 @@ function Home() {
           <p className="mt-6 text-lg md:text-xl text-secondary/80 max-w-2xl mx-auto">
             Handcrafted Yogofura &amp; Yoghurt — Healthy, Fresh &amp; Delivered in Abuja
           </p>
-          <div className="mt-10 flex flex-wrap justify-center gap-3">
+
+          {/* Quick product dropdown */}
+          <div className="mt-8 max-w-xs mx-auto">
+            <label htmlFor="hero-product" className="sr-only">Choose a product</label>
+            <select
+              id="hero-product"
+              value={selectedProduct}
+              onChange={(e) => setSelectedProduct(e.target.value)}
+              className={`${inputCls} appearance-none cursor-pointer text-center font-medium`}
+            >
+              <option value="" disabled>Choose a product</option>
+              {PRODUCTS.map((p) => (
+                <option key={p.name} value={p.name}>{p.name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
             <button
               onClick={() => scrollTo("order")}
               className="rounded-full bg-primary px-8 py-4 text-sm font-semibold text-white shadow-lg shadow-primary/30 hover:brightness-110 transition"
             >
-              Order Now
+              Order {selectedProduct || "Now"}
             </button>
             <button
               onClick={() => scrollTo("products")}
