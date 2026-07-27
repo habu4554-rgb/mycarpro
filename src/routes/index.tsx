@@ -206,10 +206,11 @@ function Home() {
                 <div className="absolute top-4 right-4 rounded-full bg-primary text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1">
                   {p.badge}
                 </div>
-                <div className="h-32 rounded-2xl bg-gradient-to-br from-blush via-muted to-white mb-5 grid place-items-center">
+              <div className="h-32 rounded-2xl bg-gradient-to-br from-blush via-muted to-white mb-5 grid place-items-center">
                   <span className="font-display italic text-primary/40 text-5xl">🥛</span>
                 </div>
-                <h3 className="font-display italic text-2xl text-secondary mb-2">{p.name}</h3>
+                <h3 className="font-display italic text-2xl text-secondary mb-1">{p.name}</h3>
+                <div className="text-xl font-bold text-primary mb-2">{p.price}</div>
                 <p className="text-sm text-secondary/70 leading-relaxed mb-5">{p.desc}</p>
                 <button
                   onClick={() => {
