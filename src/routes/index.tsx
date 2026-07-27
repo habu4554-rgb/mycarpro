@@ -403,31 +403,23 @@ function Home() {
                   </Field>
                 )}
 
-                <div>
-                  <span className="block text-xs uppercase tracking-widest text-secondary/70 font-semibold mb-3">Select Products & Quantities</span>
-                  <div className="grid gap-3">
-                    {PRODUCTS.map((p) => {
-                      const qty = quantities[p.name] || 0;
-                      const lineTotal = priceMap[p.name] * qty;
-                      return (
-                        <div key={p.name} className="flex items-center justify-between gap-3 rounded-xl border border-primary/15 bg-blush/30 p-3">
-                          <div className="min-w-0 flex-1">
-                            <div className="font-semibold text-secondary text-sm truncate">{p.name}</div>
-                            <div className="text-xs text-primary font-bold">
-                              {formatNaira(priceMap[p.name])}
-                              {qty > 0 && <span className="text-secondary/60 font-normal"> · Subtotal {formatNaira(lineTotal)}</span>}
-                            </div>
+                <div className="rounded-xl border border-primary/15 bg-blush/30 p-4">
+                  <span className="block text-xs uppercase tracking-widest text-secondary/70 font-semibold mb-3">Your Order Summary</span>
+                  {Object.entries(quantities).filter(([, q]) => q > 0).length === 0 ? (
+                    <p className="text-sm text-secondary/60 italic">No products selected yet. Go back to the menu to choose your cups.</p>
+                  ) : (
+                    <div className="grid gap-2">
+                      {Object.entries(quantities)
+                        .filter(([, q]) => q > 0)
+                        .map(([name, qty]) => (
+                          <div key={name} className="flex items-center justify-between text-sm">
+                            <span className="text-secondary">{name} <span className="text-secondary/60">× {qty}</span></span>
+                            <span className="font-semibold text-primary">{formatNaira(priceMap[name] * qty)}</span>
                           </div>
-                          <div className="flex items-center gap-2 shrink-0">
-                            <button type="button" onClick={() => setQty(p.name, qty - 1)} className="h-9 w-9 rounded-full bg-white border border-primary/30 text-primary font-bold hover:bg-primary hover:text-white transition" aria-label={`Decrease ${p.name}`}>−</button>
-                            <span className="w-8 text-center font-bold text-secondary">{qty}</span>
-                            <button type="button" onClick={() => setQty(p.name, qty + 1)} className="h-9 w-9 rounded-full bg-white border border-primary/30 text-primary font-bold hover:bg-primary hover:text-white transition" aria-label={`Increase ${p.name}`}>+</button>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <div className="mt-4 flex items-center justify-between rounded-xl bg-primary/10 px-4 py-3">
+                        ))}
+                    </div>
+                  )}
+                  <div className="mt-3 pt-3 border-t border-primary/10 flex items-center justify-between">
                     <span className="text-sm font-semibold text-secondary uppercase tracking-wider">Total</span>
                     <span className="text-2xl font-bold text-primary">{formatNaira(total)}</span>
                   </div>
