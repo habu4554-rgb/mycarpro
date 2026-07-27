@@ -273,23 +273,20 @@ function Home() {
                   <textarea required name="address" rows={2} className={inputCls} placeholder="Street, area, landmark" />
                 </Field>
                 <div className="grid sm:grid-cols-2 gap-5">
-                  <Field label="Product">
-                    <select
-                      required
-                      name="product"
-                      value={selectedProduct}
-                      onChange={(e) => setSelectedProduct(e.target.value)}
-                      className={inputCls}
-                    >
-                      {PRODUCTS.map((p) => (
-                        <option key={p.name} value={p.name}>{p.name}</option>
-                      ))}
-                    </select>
+                  <Field label="Yogofura — how many cups?">
+                    <input type="number" min={0} placeholder="0" name="yogofura_qty" className={inputCls} />
                   </Field>
-                  <Field label="Quantity">
-                    <input required type="number" min={1} defaultValue={1} name="quantity" className={inputCls} />
+                  <Field label="Greek Yogurt — how many cups?">
+                    <input type="number" min={0} placeholder="0" name="greek_yogurt_qty" className={inputCls} />
+                  </Field>
+                  <Field label="Parfait — how many cups?">
+                    <input type="number" min={0} placeholder="0" name="parfait_qty" className={inputCls} />
+                  </Field>
+                  <Field label="Plain Sweetened Yoghurt — how many cups?">
+                    <input type="number" min={0} placeholder="0" name="plain_sweetened_qty" className={inputCls} />
                   </Field>
                 </div>
+                <p className="text-xs text-secondary/60 italic -mt-2">Enter 0 for products you don't want</p>
                 <Field label="Preferred Delivery Date">
                   <input required type="date" name="delivery_date" className={inputCls} />
                 </Field>
