@@ -62,22 +62,79 @@ function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [sent, setSent] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState("Yogofura");
+  const [quantities, setQuantities] = useState<Record<string, number>>({
+    Yogofura: 0,
+    "Plain Sweetened Yoghurt": 0,
+    "Greek Yogurt": 0,
+    Parfait: 0,
+  });
+  const [fulfilment, setFulfilment] = useState<"Delivery" | "Pickup">("Delivery");
+
+  const priceMap: Record<string, number> = {
+    Yogofura: 2400,
+    "Plain Sweetened Yoghurt": 2300,
+    "Greek Yogurt": 4000,
+    Parfait: 6000,
+  };
+
+  const total = Object.entries(quantities).reduce(
+    (sum, [name, qty]) => sum + (priceMap[name] || 0) * (qty || 0),
+    0,
+  );
+
+  const formatNaira = (n: number) => `₦${n.toLocaleString("en-NG")}`;
+
+  const setQty = (name: string, val: number) =>
+    setQuantities((q) => ({ ...q, [name]: Math.max(0, val || 0) }));
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
     const data = new FormData(form);
+
+    const items = Object.entries(quantities).filter(([, q]) => q > 0);
+    if (items.length === 0) return;
+
+    items.forEach(([n, q]) => data.append(`${n} (qty)`, String(q)));
+    data.append("Total", formatNaira(total));
+    data.append("Fulfilment", fulfilment);
+
+    const name = String(data.get("name") || "");
+    const phone = String(data.get("phone") || "");
+    const address = String(data.get("address") || "");
+    const deliveryDate = String(data.get("delivery_date") || "");
+    const pickupTime = String(data.get("pickup_time") || "");
+    const notes = String(data.get("notes") || "");
+
+    const lines = [
+      `*New Order — The Creamy Spot*`,
+      `Name: ${name}`,
+      `Phone: ${phone}`,
+      `Type: ${fulfilment}`,
+      fulfilment === "Delivery" ? `Address: ${address}` : `Pickup Time: ${pickupTime}`,
+      `Date: ${deliveryDate}`,
+      ``,
+      `Order:`,
+      ...items.map(([n, q]) => `• ${n} × ${q} — ${formatNaira(priceMap[n] * q)}`),
+      ``,
+      `Total: ${formatNaira(total)}`,
+      notes ? `Notes: ${notes}` : "",
+    ].filter(Boolean);
+
+    const waUrl = `https://wa.me/2347016902642?text=${encodeURIComponent(lines.join("\n"))}`;
+
     try {
-      const res = await fetch("https://formspree.io/f/mkodkbve", {
+      await fetch("https://formspree.io/f/mkodkbve", {
         method: "POST",
         body: data,
         headers: { Accept: "application/json" },
       });
-      if (res.ok) {
-        setSent(true);
-        form.reset();
-      }
     } catch {}
+
+    setSent(true);
+    form.reset();
+    setQuantities({ Yogofura: 0, "Plain Sweetened Yoghurt": 0, "Greek Yogurt": 0, Parfait: 0 });
+    window.open(waUrl, "_blank");
   };
 
   const scrollTo = (id: string) => {
