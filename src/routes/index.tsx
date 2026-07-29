@@ -178,7 +178,6 @@ function Home() {
           </nav>
           <a
             href={WHATSAPP}
-            target="_blank"
             rel="noreferrer"
             className="hidden md:inline-flex items-center gap-2 rounded-full bg-whatsapp px-4 py-2 text-sm font-semibold text-white shadow-md hover:brightness-110 transition"
           >
@@ -412,7 +411,6 @@ function Home() {
                 <p className="font-display italic text-2xl text-secondary">Order received! We will contact you shortly.</p>
                 <a
                   href={lastWaUrl || WHATSAPP}
-                  target="_blank"
                   rel="noreferrer"
                   className="mt-6 inline-flex items-center gap-2 rounded-full bg-whatsapp px-6 py-3 text-sm font-semibold text-white shadow-lg hover:brightness-110 transition"
                 >
@@ -510,7 +508,6 @@ function Home() {
             <p className="text-secondary mb-3">Or message us directly:</p>
             <a
               href={WHATSAPP}
-              target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-2 rounded-full bg-whatsapp px-6 py-3 text-sm font-semibold text-white shadow-lg hover:brightness-110 transition"
             >
@@ -538,7 +535,6 @@ function Home() {
                 <p className="font-display italic text-2xl text-secondary">Enquiry received! We will contact you shortly.</p>
                 <a
                   href={WHATSAPP}
-                  target="_blank"
                   rel="noreferrer"
                   className="mt-6 inline-flex items-center gap-2 rounded-full bg-whatsapp px-6 py-3 text-sm font-semibold text-white shadow-lg hover:brightness-110 transition"
                 >
@@ -607,7 +603,6 @@ function Home() {
             </p>
             <a
               href={WHATSAPP}
-              target="_blank"
               rel="noreferrer"
               className="mt-5 inline-flex items-center gap-2 rounded-full bg-whatsapp px-6 py-3 text-sm font-semibold text-white shadow-lg hover:brightness-110 transition"
             >
@@ -709,7 +704,6 @@ function Home() {
             <div className="uppercase tracking-widest text-white/60 text-xs mb-3">Chat With Us</div>
             <a
               href={WHATSAPP}
-              target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-2 rounded-full bg-whatsapp px-5 py-2.5 font-semibold text-white hover:brightness-110 transition"
             >
@@ -725,7 +719,6 @@ function Home() {
       {/* Floating WhatsApp */}
       <a
         href={WHATSAPP}
-        target="_blank"
         rel="noreferrer"
         aria-label="Chat on WhatsApp"
         className="fixed bottom-5 right-5 z-50 grid place-items-center h-14 w-14 rounded-full bg-whatsapp text-white shadow-xl shadow-whatsapp/40 hover:scale-110 transition"
