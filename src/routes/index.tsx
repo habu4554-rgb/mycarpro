@@ -193,7 +193,7 @@ function Home() {
             <button onClick={() => scrollTo("products")} className="text-left">Products</button>
             <button onClick={() => scrollTo("how")} className="text-left">How to Order</button>
             <button onClick={() => scrollTo("contact")} className="text-left">Contact</button>
-            <a href={WHATSAPP} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-whatsapp px-4 py-2 text-sm font-semibold text-white w-fit">
+            <a href={WHATSAPP} rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-whatsapp px-4 py-2 text-sm font-semibold text-white w-fit">
               <MessageCircle className="h-4 w-4" /> Order on WhatsApp
             </a>
           </div>
@@ -664,7 +664,7 @@ function Home() {
                 <MessageCircle className="h-5 w-5 text-whatsapp mt-1 shrink-0" />
                 <div>
                   <div className="text-xs uppercase tracking-widest text-secondary/60 mb-1">WhatsApp</div>
-                  <a href={WHATSAPP} target="_blank" rel="noreferrer" className="text-secondary font-medium">{PHONE}</a>
+                  <a href={WHATSAPP} rel="noreferrer" className="text-secondary font-medium">{PHONE}</a>
                 </div>
               </div>
               <div className="flex items-start gap-4 pt-4 border-t border-primary/10">
