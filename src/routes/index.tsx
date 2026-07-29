@@ -271,7 +271,40 @@ function Home() {
                 <p className="text-sm text-secondary/70 leading-relaxed">{p.desc}</p>
               </div>
             ))}
+
+            {/* Custom Cakes — special order card */}
+            <div className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-blush via-muted to-white p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border-2 border-dashed border-primary">
+              <div className="absolute top-4 -right-10 rotate-45 bg-primary text-white text-[10px] font-bold uppercase tracking-wider px-10 py-1 shadow-md">
+                ✨ Special Order
+              </div>
+              <div className="inline-block rounded-full bg-secondary text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 mb-3">
+                Made to Order
+              </div>
+              <div className="h-32 rounded-2xl bg-white/70 mb-5 grid place-items-center">
+                <span className="text-5xl">🎂</span>
+              </div>
+              <h3 className="font-display italic text-2xl text-secondary mb-1">Custom Cakes</h3>
+              <div className="italic font-semibold text-primary mb-2">Price on request</div>
+              <p className="text-sm text-secondary/70 leading-relaxed">
+                Every cake is uniquely crafted to match your vision — from birthdays to weddings, celebrations to
+                corporate events. Flavours, sizes and designs are fully customizable.
+              </p>
+              <div className="mt-4">
+                <div className="text-sm font-semibold text-secondary">Pricing varies by order</div>
+                <p className="text-xs text-secondary/60 mt-1">
+                  Tell us what you need and we&apos;ll create something special just for you
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => scrollTo("cake-enquiry")}
+                className="mt-5 w-full rounded-full bg-primary py-3 text-sm font-semibold text-white shadow-lg shadow-primary/30 hover:brightness-110 transition"
+              >
+                Discuss Your Cake
+              </button>
+            </div>
           </div>
+
 
           {/* Quantity selector near menu */}
           <div className="mt-14 max-w-3xl mx-auto">
