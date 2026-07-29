@@ -61,6 +61,9 @@ const REVIEWS = [
 function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [sent, setSent] = useState(false);
+  const [cakeSent, setCakeSent] = useState(false);
+  const [lastWaUrl, setLastWaUrl] = useState("");
+
   const [selectedProduct, setSelectedProduct] = useState("Yogofura");
   const [quantities, setQuantities] = useState<Record<string, number>>({
     Yogofura: 0,
