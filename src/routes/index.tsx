@@ -459,6 +459,104 @@ function Home() {
         </div>
       </section>
 
+      {/* CUSTOM CAKE ENQUIRY */}
+      <section id="cake-enquiry" className="px-4 sm:px-6 py-20 md:py-28 bg-white/50">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="text-xs uppercase tracking-[0.3em] text-primary mb-3 font-semibold">Cakes</div>
+            <h2 className="font-display italic text-4xl md:text-5xl text-secondary">Custom Cake Enquiry</h2>
+            <p className="mt-3 text-secondary/70">
+              Have a cake in mind? Tell us about it and we&apos;ll get back to you with pricing and details
+            </p>
+          </div>
+
+          <form onSubmit={handleCakeSubmit} className="rounded-3xl bg-white p-6 md:p-10 shadow-lg border border-primary/10">
+            {cakeSent ? (
+              <div className="text-center py-10">
+                <div className="inline-grid place-items-center h-16 w-16 rounded-full bg-primary text-white text-3xl mb-4">✓</div>
+                <p className="font-display italic text-2xl text-secondary">Enquiry received! We will contact you shortly.</p>
+                <a
+                  href={WHATSAPP}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-6 inline-flex items-center gap-2 rounded-full bg-whatsapp px-6 py-3 text-sm font-semibold text-white shadow-lg hover:brightness-110 transition"
+                >
+                  <MessageCircle className="h-4 w-4" /> Confirm on WhatsApp
+                </a>
+              </div>
+            ) : (
+              <div className="grid gap-5">
+                <Field label="Full Name">
+                  <input required name="cake_name" className={inputCls} placeholder="Your full name" />
+                </Field>
+                <Field label="Phone Number">
+                  <input required type="tel" name="cake_phone" className={inputCls} placeholder="+234 000 000 0000" />
+                </Field>
+                <Field label="Type of Cake">
+                  <select required name="cake_type" defaultValue="" className={`${inputCls} appearance-none cursor-pointer`}>
+                    <option value="" disabled>Select cake type</option>
+                    <option>Birthday Cake</option>
+                    <option>Wedding Cake</option>
+                    <option>Anniversary Cake</option>
+                    <option>Baby Shower Cake</option>
+                    <option>Corporate Event Cake</option>
+                    <option>Other (please specify)</option>
+                  </select>
+                </Field>
+                <Field label="Cake Size / Number of Tiers">
+                  <input required name="cake_size" className={inputCls} placeholder="e.g. 2 tier, feeds 50 people" />
+                </Field>
+                <Field label="Preferred Flavour">
+                  <input required name="cake_flavour" className={inputCls} placeholder="e.g. vanilla, chocolate, red velvet" />
+                </Field>
+                <Field label="Design Description">
+                  <textarea required name="cake_design" rows={4} className={inputCls} placeholder="Describe your dream cake — colours, decorations, theme, any inspiration..." />
+                </Field>
+                <Field label="When do you need it?">
+                  <input required type="date" name="cake_event_date" className={inputCls} />
+                </Field>
+                <Field label="Budget Range">
+                  <select required name="cake_budget" defaultValue="" className={`${inputCls} appearance-none cursor-pointer`}>
+                    <option value="" disabled>Select a budget range</option>
+                    <option>Under ₦10,000</option>
+                    <option>₦10,000 - ₦25,000</option>
+                    <option>₦25,000 - ₦50,000</option>
+                    <option>₦50,000 - ₦100,000</option>
+                    <option>Above ₦100,000</option>
+                    <option>Not sure yet</option>
+                  </select>
+                </Field>
+                <Field label="Anything else we should know? (optional)">
+                  <textarea name="cake_notes" rows={3} className={inputCls} placeholder="Additional notes" />
+                </Field>
+                <button
+                  type="submit"
+                  className="w-full rounded-full bg-primary py-4 text-sm font-semibold text-white shadow-lg shadow-primary/30 hover:brightness-110 transition"
+                >
+                  Send Cake Enquiry
+                </button>
+              </div>
+            )}
+          </form>
+
+          <div className="mt-8 rounded-3xl bg-blush p-6 md:p-8 text-center border border-primary/15">
+            <p className="font-display italic text-xl text-secondary">💬 Prefer to talk directly?</p>
+            <p className="mt-2 text-sm text-secondary/70">
+              Chat with us on WhatsApp to discuss your cake needs in real time.
+            </p>
+            <a
+              href={WHATSAPP}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-5 inline-flex items-center gap-2 rounded-full bg-whatsapp px-6 py-3 text-sm font-semibold text-white shadow-lg hover:brightness-110 transition"
+            >
+              <MessageCircle className="h-4 w-4" /> Chat About My Cake
+            </a>
+          </div>
+        </div>
+      </section>
+
+
       {/* TESTIMONIALS */}
       <section className="px-4 sm:px-6 py-20 md:py-28 bg-white/50">
         <div className="max-w-6xl mx-auto">
