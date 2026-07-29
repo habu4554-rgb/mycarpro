@@ -13,8 +13,39 @@ import {
   Snowflake,
   Leaf,
 } from "lucide-react";
+import yogofuraAsset from "@/assets/yogofura.jpg.asset.json";
+import cakeAsset from "@/assets/custom-cake.jpg.asset.json";
+import ogAsset from "@/assets/creamy-spot-og.jpg.asset.json";
 
-export const Route = createFileRoute("/")({ component: Home });
+const SITE = "https://mycarpro-tallinn-hub.lovable.app";
+const OG_IMAGE = `${SITE}${ogAsset.url}`;
+
+export const Route = createFileRoute("/")({
+  component: Home,
+  head: () => ({
+    meta: [
+      { title: "The Creamy Spot | Yogofura, Greek Yogurt & Parfait in Abuja" },
+      {
+        name: "description",
+        content:
+          "Nature's Redefined Taste — handcrafted Yogofura, Greek Yogurt, Parfait & custom cakes, made fresh daily and delivered across Abuja. Order on WhatsApp.",
+      },
+      { property: "og:title", content: "The Creamy Spot | Creamy, Fresh & Nourishing — Abuja" },
+      {
+        property: "og:description",
+        content:
+          "Handcrafted Yogofura, Greek Yogurt, Parfait & custom cakes. Fresh daily, delivered in Abuja.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: `${SITE}/` },
+      { property: "og:image", content: OG_IMAGE },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: OG_IMAGE },
+    ],
+    links: [{ rel: "canonical", href: `${SITE}/` }],
+  }),
+});
+
 
 const WHATSAPP = "https://wa.me/2347016902642";
 const PHONE = "+234 701 690 2642";
@@ -22,29 +53,54 @@ const PHONE = "+234 701 690 2642";
 const PRODUCTS = [
   {
     name: "Yogofura",
-    price: "₦2,400",
+    img: yogofuraAsset.url,
     desc: "A rich blend of creamy yoghurt and traditional Hausa fura. The perfect healthy indulgence.",
     badge: "Best Seller",
+    sizes: [
+      { label: "50cl", price: 2400 },
+      { label: "35cl", price: 1900 },
+    ],
   },
   {
     name: "Plain Sweetened Yoghurt",
-    price: "₦2,300",
+    img: "",
     desc: "Silky smooth, lightly sweetened and perfectly fresh. Simple and nourishing.",
     badge: "Classic",
+    sizes: [
+      { label: "50cl", price: 2300 },
+      { label: "35cl", price: 1800 },
+    ],
   },
   {
     name: "Greek Yogurt",
-    price: "₦4,000",
+    img: "",
     desc: "Thick, smooth and protein-rich, made fresh with no preservatives.",
     badge: "High Protein",
+    sizes: [
+      { label: "500ml", price: 5000 },
+      { label: "300ml", price: 4000 },
+    ],
   },
   {
     name: "Parfait",
-    price: "₦6,000",
+    img: "",
     desc: "Layered goodness of yoghurt, granola and fruits. A treat that's as beautiful as it is delicious.",
     badge: "Fan Favourite",
+    sizes: [
+      { label: "500ml", price: 6000 },
+      { label: "300ml", price: 4500 },
+    ],
   },
 ];
+
+const VARIANTS = PRODUCTS.flatMap((p) =>
+  p.sizes.map((s) => ({ key: `${p.name} ${s.label}`, name: p.name, size: s.label, price: s.price })),
+);
+
+const PRICE_MAP: Record<string, number> = Object.fromEntries(VARIANTS.map((v) => [v.key, v.price]));
+
+const emptyQuantities = () => Object.fromEntries(VARIANTS.map((v) => [v.key, 0])) as Record<string, number>;
+
 
 const STEPS = [
   { icon: ShoppingBag, title: "Choose Your Product", text: "Browse our menu and pick your favourite — Yogofura, Greek Yogurt, Parfait or Plain." },
@@ -65,20 +121,10 @@ function Home() {
   const [lastWaUrl, setLastWaUrl] = useState("");
 
   const [selectedProduct, setSelectedProduct] = useState("Yogofura");
-  const [quantities, setQuantities] = useState<Record<string, number>>({
-    Yogofura: 0,
-    "Plain Sweetened Yoghurt": 0,
-    "Greek Yogurt": 0,
-    Parfait: 0,
-  });
+  const [quantities, setQuantities] = useState<Record<string, number>>(emptyQuantities);
   const [fulfilment, setFulfilment] = useState<"Delivery" | "Pickup">("Delivery");
 
-  const priceMap: Record<string, number> = {
-    Yogofura: 2400,
-    "Plain Sweetened Yoghurt": 2300,
-    "Greek Yogurt": 4000,
-    Parfait: 6000,
-  };
+  const priceMap = PRICE_MAP;
 
   const total = Object.entries(quantities).reduce(
     (sum, [name, qty]) => sum + (priceMap[name] || 0) * (qty || 0),
@@ -89,6 +135,7 @@ function Home() {
 
   const setQty = (name: string, val: number) =>
     setQuantities((q) => ({ ...q, [name]: Math.max(0, val || 0) }));
+
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -137,7 +184,7 @@ function Home() {
     setLastWaUrl(waUrl);
     setSent(true);
     form.reset();
-    setQuantities({ Yogofura: 0, "Plain Sweetened Yoghurt": 0, "Greek Yogurt": 0, Parfait: 0 });
+    setQuantities(emptyQuantities());
   };
 
   const handleCakeSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -282,12 +329,31 @@ function Home() {
                 <div className="absolute top-4 right-4 rounded-full bg-primary text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1">
                   {p.badge}
                 </div>
-                <div className="h-32 rounded-2xl bg-gradient-to-br from-blush via-muted to-white mb-5 grid place-items-center">
-                  <span className="font-display italic text-primary/40 text-5xl">🥛</span>
-                </div>
+                {p.img ? (
+                  <img
+                    src={p.img}
+                    alt={`${p.name} from The Creamy Spot`}
+                    loading="lazy"
+                    width={1024}
+                    height={1024}
+                    className="h-32 w-full object-cover rounded-2xl mb-5"
+                  />
+                ) : (
+                  <div className="h-32 rounded-2xl bg-gradient-to-br from-blush via-muted to-white mb-5 grid place-items-center">
+                    <span className="font-display italic text-primary/40 text-5xl">🥛</span>
+                  </div>
+                )}
                 <h3 className="font-display italic text-2xl text-secondary mb-1">{p.name}</h3>
-                <div className="text-xl font-bold text-primary mb-2">{p.price}</div>
+                <div className="mb-2 grid gap-1">
+                  {p.sizes.map((s) => (
+                    <div key={s.label} className="flex items-center justify-between text-sm">
+                      <span className="text-secondary/70 font-medium">{s.label}</span>
+                      <span className="font-bold text-primary">₦{s.price.toLocaleString("en-NG")}</span>
+                    </div>
+                  ))}
+                </div>
                 <p className="text-sm text-secondary/70 leading-relaxed">{p.desc}</p>
+
               </div>
             ))}
 
@@ -299,9 +365,15 @@ function Home() {
               <div className="inline-block rounded-full bg-secondary text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 mb-3">
                 Made to Order
               </div>
-              <div className="h-32 rounded-2xl bg-white/70 mb-5 grid place-items-center">
-                <span className="text-5xl">🎂</span>
-              </div>
+              <img
+                src={cakeAsset.url}
+                alt="Custom celebration cake by The Creamy Spot"
+                loading="lazy"
+                width={1024}
+                height={1024}
+                className="h-32 w-full object-cover rounded-2xl mb-5"
+              />
+
               <h3 className="font-display italic text-2xl text-secondary mb-1">Custom Cakes</h3>
               <div className="italic font-semibold text-primary mb-2">Price on request</div>
               <p className="text-sm text-secondary/70 leading-relaxed">
@@ -331,26 +403,29 @@ function Home() {
               <h3 className="font-display italic text-2xl md:text-3xl text-secondary text-center mb-2">Select Your Cups</h3>
               <p className="text-center text-sm text-secondary/70 mb-6">Choose quantities for each product — your running total updates automatically.</p>
               <div className="grid gap-3">
-                {PRODUCTS.map((p) => {
-                  const qty = quantities[p.name] || 0;
-                  const lineTotal = priceMap[p.name] * qty;
+                {VARIANTS.map((v) => {
+                  const qty = quantities[v.key] || 0;
+                  const lineTotal = v.price * qty;
                   return (
-                    <div key={p.name} className="flex items-center justify-between gap-3 rounded-xl border border-primary/15 bg-blush/30 p-3">
+                    <div key={v.key} className="flex items-center justify-between gap-3 rounded-xl border border-primary/15 bg-blush/30 p-3">
                       <div className="min-w-0 flex-1">
-                        <div className="font-semibold text-secondary text-sm truncate">{p.name}</div>
+                        <div className="font-semibold text-secondary text-sm truncate">
+                          {v.name} <span className="text-secondary/60">· {v.size}</span>
+                        </div>
                         <div className="text-xs text-primary font-bold">
-                          {formatNaira(priceMap[p.name])}
+                          {formatNaira(v.price)}
                           {qty > 0 && <span className="text-secondary/60 font-normal"> · Subtotal {formatNaira(lineTotal)}</span>}
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <button type="button" onClick={() => setQty(p.name, qty - 1)} className="h-9 w-9 rounded-full bg-white border border-primary/30 text-primary font-bold hover:bg-primary hover:text-white transition" aria-label={`Decrease ${p.name}`}>−</button>
+                        <button type="button" onClick={() => setQty(v.key, qty - 1)} className="h-9 w-9 rounded-full bg-white border border-primary/30 text-primary font-bold hover:bg-primary hover:text-white transition" aria-label={`Decrease ${v.key}`}>−</button>
                         <span className="w-8 text-center font-bold text-secondary">{qty}</span>
-                        <button type="button" onClick={() => setQty(p.name, qty + 1)} className="h-9 w-9 rounded-full bg-white border border-primary/30 text-primary font-bold hover:bg-primary hover:text-white transition" aria-label={`Increase ${p.name}`}>+</button>
+                        <button type="button" onClick={() => setQty(v.key, qty + 1)} className="h-9 w-9 rounded-full bg-white border border-primary/30 text-primary font-bold hover:bg-primary hover:text-white transition" aria-label={`Increase ${v.key}`}>+</button>
                       </div>
                     </div>
                   );
                 })}
+
               </div>
               <div className="mt-5 flex items-center justify-between rounded-xl bg-primary/10 px-4 py-3">
                 <span className="text-sm font-semibold text-secondary uppercase tracking-wider">Total</span>
