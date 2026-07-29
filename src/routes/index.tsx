@@ -131,11 +131,28 @@ function Home() {
       });
     } catch {}
 
+    setLastWaUrl(waUrl);
     setSent(true);
     form.reset();
     setQuantities({ Yogofura: 0, "Plain Sweetened Yoghurt": 0, "Greek Yogurt": 0, Parfait: 0 });
-    window.open(waUrl, "_blank");
   };
+
+  const handleCakeSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const data = new FormData(form);
+    data.append("_subject", "Custom Cake Enquiry");
+    try {
+      await fetch("https://formspree.io/f/mkodkbve", {
+        method: "POST",
+        body: data,
+        headers: { Accept: "application/json" },
+      });
+    } catch {}
+    setCakeSent(true);
+    form.reset();
+  };
+
 
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
