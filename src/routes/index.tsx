@@ -356,9 +356,17 @@ function Home() {
             {sent ? (
               <div className="text-center py-10">
                 <div className="inline-grid place-items-center h-16 w-16 rounded-full bg-primary text-white text-3xl mb-4">✓</div>
-                <p className="font-display italic text-2xl text-secondary">Thank you, we have received your order!</p>
-                <p className="mt-2 text-sm text-secondary/70">We've opened WhatsApp so you can confirm your order with us directly.</p>
+                <p className="font-display italic text-2xl text-secondary">Order received! We will contact you shortly.</p>
+                <a
+                  href={lastWaUrl || WHATSAPP}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-6 inline-flex items-center gap-2 rounded-full bg-whatsapp px-6 py-3 text-sm font-semibold text-white shadow-lg hover:brightness-110 transition"
+                >
+                  <MessageCircle className="h-4 w-4" /> Confirm on WhatsApp
+                </a>
               </div>
+
             ) : (
               <div className="grid gap-5">
                 <Field label="Full Name">
