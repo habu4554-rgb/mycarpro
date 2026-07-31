@@ -191,3 +191,54 @@ export const translations = {
     footer: "© 2026 MyCar Pro. Kõik õigused kaitstud.",
   },
 } as const;
+
+export const extras = {
+  en: {
+    heroTitle: "Tallinn's Fast Lane for Tyres & Car Care",
+    heroSub: "Same-day tyre fitting, honest diagnostics and expert repairs — book online in under a minute.",
+    why: {
+      title: "Why drivers choose us",
+      subtitle: "Fair prices, modern equipment and a team that explains everything before touching your car.",
+      items: [
+        ["Same-day service", "Most tyre and maintenance jobs are finished while you wait."],
+        ["Transparent pricing", "You see the estimated cost before you confirm the booking."],
+        ["Certified mechanics", "Dealer-level tools and diagnostics for every brand."],
+        ["Warranty on work", "Every repair is covered — we stand behind our craft."],
+      ],
+    },
+    timeLabel: "Preferred time",
+    route: "Get directions",
+  },
+  ru: {
+    heroTitle: "Быстрый шиномонтаж и автосервис в Таллинне",
+    heroSub: "Шиномонтаж в день обращения, честная диагностика и профессиональный ремонт — запись онлайн за минуту.",
+    why: {
+      title: "Почему выбирают нас",
+      subtitle: "Честные цены, современное оборудование и команда, которая всё объясняет заранее.",
+      items: [
+        ["Обслуживание в день обращения", "Большинство работ выполняем, пока вы ждёте."],
+        ["Прозрачные цены", "Вы видите стоимость до подтверждения записи."],
+        ["Сертифицированные мастера", "Дилерское оборудование и диагностика для всех марок."],
+        ["Гарантия на работы", "Мы отвечаем за качество каждого ремонта."],
+      ],
+    },
+    timeLabel: "Удобное время",
+    route: "Построить маршрут",
+  },
+  et: {
+    heroTitle: "Kiire rehvivahetus ja autohooldus Tallinnas",
+    heroSub: "Rehvivahetus samal päeval, aus diagnostika ja professionaalne remont — broneeri online alla minutiga.",
+    why: {
+      title: "Miks meid valitakse",
+      subtitle: "Ausad hinnad, kaasaegne varustus ja meeskond, kes selgitab kõike enne tööd.",
+      items: [
+        ["Teenindus samal päeval", "Enamik töid saab tehtud ootamise ajal."],
+        ["Läbipaistvad hinnad", "Näed hinnangulist hinda enne broneeringu kinnitamist."],
+        ["Sertifitseeritud mehaanikud", "Esindustasemel tööriistad ja diagnostika."],
+        ["Garantii töödele", "Seisame iga remondi kvaliteedi taga."],
+      ],
+    },
+    timeLabel: "Sobiv kellaaeg",
+    route: "Juhised kohale",
+  },
+} as const;
