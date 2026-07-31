@@ -167,7 +167,7 @@ function Index() {
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(100deg, oklch(0.97 0.02 230 / 0.93) 0%, oklch(0.95 0.03 232 / 0.72) 38%, oklch(0.55 0.09 240 / 0.28) 100%), linear-gradient(180deg, transparent 70%, oklch(0.985 0.008 230) 100%)",
+              "linear-gradient(100deg, oklch(0.98 0.012 230 / 0.95) 0%, oklch(0.96 0.02 232 / 0.72) 32%, oklch(0.96 0.02 232 / 0.1) 58%, oklch(0.35 0.09 250 / 0.18) 100%), linear-gradient(180deg, transparent 72%, oklch(0.985 0.008 230) 100%)",
           }}
         />
         <div className="relative max-w-7xl mx-auto px-6 pt-32 pb-20 w-full">
