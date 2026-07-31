@@ -122,7 +122,7 @@ function Index() {
       <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-background/80 border-b border-border">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
           <a href="#top" className="flex items-center gap-2">
-            <img src={logo} alt="MyCar Pro logo" width={160} height={160} className="h-10 w-auto" />
+            <img src={logo} alt="MyCar Pro logo" width={160} height={160} className="h-9 w-auto" />
             <span className="sr-only">MyCar Pro</span>
           </a>
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
@@ -167,7 +167,7 @@ function Index() {
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(100deg, oklch(0.97 0.02 230 / 0.96) 0%, oklch(0.95 0.03 232 / 0.86) 42%, oklch(0.85 0.06 235 / 0.35) 100%)",
+              "linear-gradient(100deg, oklch(0.97 0.02 230 / 0.93) 0%, oklch(0.95 0.03 232 / 0.72) 38%, oklch(0.55 0.09 240 / 0.28) 100%), linear-gradient(180deg, transparent 70%, oklch(0.985 0.008 230) 100%)",
           }}
         />
         <div className="relative max-w-7xl mx-auto px-6 pt-32 pb-20 w-full">
