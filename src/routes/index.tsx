@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Wrench,
   Disc,
@@ -141,7 +141,7 @@ function Index() {
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [slotError, setSlotError] = useState(false);
 
-  const loadSlots = useCallback(async (date: string) => {
+  const loadSlots = async (date: string) => {
     if (!date) {
       setTakenToday([]);
       return;
@@ -163,11 +163,12 @@ function Index() {
       );
     }
     setLoadingSlots(false);
-  }, []);
+  };
 
   useEffect(() => {
     void loadSlots(form.date);
-  }, [form.date, loadSlots]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.date]);
 
   // Slots in the past are unavailable when the chosen date is today
   const [now, setNow] = useState(() => new Date());
@@ -176,19 +177,13 @@ function Index() {
     return () => clearInterval(id);
   }, []);
 
-  const isPast = useCallback(
-    (slot: string) => {
-      if (!form.date || form.date !== toDateInput(now)) return false;
-      const [h, m] = slot.split(":").map(Number);
-      return h * 60 + m <= now.getHours() * 60 + now.getMinutes();
-    },
-    [form.date, now],
-  );
+  const isPast = (slot: string) => {
+    if (!form.date || form.date !== toDateInput(now)) return false;
+    const [h, m] = slot.split(":").map(Number);
+    return h * 60 + m <= now.getHours() * 60 + now.getMinutes();
+  };
 
-  const isUnavailable = useCallback(
-    (slot: string) => takenToday.includes(slot) || isPast(slot),
-    [takenToday, isPast],
-  );
+  const isUnavailable = (slot: string) => takenToday.includes(slot) || isPast(slot);
 
   // Keep the selection valid whenever availability changes
   useEffect(() => {
@@ -197,7 +192,9 @@ function Index() {
       const free = TIME_SLOTS.find((s) => !isUnavailable(s));
       setForm((f) => ({ ...f, time: free ?? "" }));
     }
-  }, [form.date, form.time, isUnavailable]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.date, form.time, takenToday, now]);
+
 
   const cost = useMemo(() => calcCost(form.size, form.car), [form.size, form.car]);
 
