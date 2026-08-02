@@ -548,6 +548,12 @@ function Index() {
                   )}
                 </div>
 
+                {submitError && (
+                  <p className="mt-6 rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                    {x.submitError} <span className="opacity-70">({submitError})</span>
+                  </p>
+                )}
+
                 <div className="mt-8 flex items-center justify-between flex-wrap gap-4 border-t border-border pt-6">
                   <div>
                     <div className="text-xs uppercase tracking-widest text-muted-foreground">{t.booking.cost}</div>
@@ -555,9 +561,10 @@ function Index() {
                   </div>
                   <button
                     type="submit"
-                    className="inline-flex items-center gap-2 rounded-xl bg-gradient-brand px-8 py-4 text-sm font-semibold text-primary-foreground shadow-brand hover:brightness-110 hover:-translate-y-0.5 transition"
+                    disabled={submitting}
+                    className="inline-flex items-center gap-2 rounded-xl bg-gradient-brand px-8 py-4 text-sm font-semibold text-primary-foreground shadow-brand hover:brightness-110 hover:-translate-y-0.5 transition disabled:opacity-60 disabled:translate-y-0"
                   >
-                    {t.booking.submit}
+                    {submitting ? x.sending : t.booking.submit}
                     <ChevronRight className="h-4 w-4" />
                   </button>
                 </div>
