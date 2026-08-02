@@ -450,7 +450,7 @@ function Index() {
                     <input required type="email" value={form.email} onChange={update("email")} className={inputCls} placeholder="you@mail.com" />
                   </Field>
                   <Field label={t.booking.date}>
-                    <input required type="date" value={form.date} onChange={update("date")} className={inputCls} />
+                    <input required type="date" min={toDateInput(now)} value={form.date} onChange={update("date")} className={inputCls} />
                   </Field>
                   <Field label={t.booking.size}>
                     <select value={form.size} onChange={update("size")} className={inputCls}>
