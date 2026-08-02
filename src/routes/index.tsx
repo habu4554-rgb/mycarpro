@@ -101,6 +101,12 @@ const PICK_DATE: Record<Lang, string> = {
   et: "Vali kuupäev, et näha vabu aegu.",
 };
 
+const SIZE_NONE: Record<Lang, string> = {
+  en: "Select size — not needed for other services",
+  ru: "Выберите размер — не нужен для других услуг",
+  et: "Vali suurus — pole muude teenuste puhul vajalik",
+};
+
 function calcCost(size: string, carType: string): number {
   const inch = parseInt(size.replace("R", ""), 10);
   if (!inch) return 40;
@@ -477,6 +483,7 @@ function Index() {
                   </Field>
                   <Field label={t.booking.size}>
                     <select value={form.size} onChange={update("size")} className={inputCls}>
+                      <option value="">{SIZE_NONE[lang]}</option>
                       {WHEEL_SIZES.map((s) => (
                         <option key={s} value={s}>{s}</option>
                       ))}
