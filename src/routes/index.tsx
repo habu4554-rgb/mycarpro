@@ -450,6 +450,11 @@ function Index() {
                   <Check className="h-8 w-8 text-primary-foreground" />
                 </div>
                 <p className="font-display text-2xl">{t.booking.success}</p>
+                {confirmed && (
+                  <p className="mt-3 text-sm text-muted-foreground">
+                    {confirmed.date} · {confirmed.time} · {cost}€
+                  </p>
+                )}
               </div>
             ) : (
               <>
