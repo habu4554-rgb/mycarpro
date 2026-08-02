@@ -496,7 +496,9 @@ function Index() {
                     <span className="block text-xs uppercase tracking-widest text-muted-foreground">
                       {x.timeLabel}
                     </span>
-                    <span className="text-xs text-muted-foreground/80">{SLOT_HINT[lang]}</span>
+                    <span className="text-xs text-muted-foreground/80">
+                      {loadingSlots ? "…" : slotError ? "" : SLOT_HINT[lang]}
+                    </span>
                   </div>
                   <div className="grid grid-cols-3 sm:grid-cols-5 gap-2.5">
                     {TIME_SLOTS.map((slot) => {
