@@ -207,16 +207,25 @@ function Index() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.date || !form.time || isUnavailable(form.time)) return;
+    setSubmitting(true);
+    setSubmitError(null);
 
     // Re-check right before writing so two people can't grab the same slot
-    const { data: clash } = await supabase
+    const { data: clash, error: clashError } = await supabase
       .from("bookings")
       .select("id")
       .eq("booking_date", form.date)
       .eq("booking_time", form.time)
       .limit(1);
+    if (clashError) {
+      setSubmitError(clashError.message);
+      setSubmitting(false);
+      return;
+    }
     if (clash && clash.length > 0) {
       await loadSlots(form.date);
+      setSubmitError(x.slotTaken);
+      setSubmitting(false);
       return;
     }
 
@@ -234,7 +243,12 @@ function Index() {
     });
     // Refresh availability so the just-taken slot disappears immediately
     await loadSlots(form.date);
-    if (error) return;
+    setSubmitting(false);
+    if (error) {
+      setSubmitError(error.message);
+      return;
+    }
+    setConfirmed({ date: form.date, time: form.time });
     setSubmitted(true);
   };
 
