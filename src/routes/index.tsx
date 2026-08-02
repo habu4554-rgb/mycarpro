@@ -135,6 +135,9 @@ function Index() {
     notes: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [confirmed, setConfirmed] = useState<{ date: string; time: string } | null>(null);
 
   // Times already booked for the selected date, loaded from Supabase
   const [takenToday, setTakenToday] = useState<string[]>([]);
