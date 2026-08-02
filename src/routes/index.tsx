@@ -464,7 +464,12 @@ function Index() {
               <div className="text-xs uppercase tracking-widest text-muted-foreground mb-1">Phone</div>
               <div className="font-display text-lg">{PHONE}</div>
             </a>
-            <a href={`mailto:${EMAIL}`} className={contactCardCls}>
+            <a
+              href={`https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(EMAIL)}`}
+              target="_blank"
+              rel="noreferrer"
+              className={contactCardCls}
+            >
               <Mail className="h-6 w-6 text-primary mb-4" />
               <div className="text-xs uppercase tracking-widest text-muted-foreground mb-1">Email</div>
               <div className="font-display text-lg break-all">{EMAIL}</div>
