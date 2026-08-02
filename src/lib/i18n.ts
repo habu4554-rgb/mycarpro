@@ -221,6 +221,9 @@ export const extras = {
     },
     timeLabel: "Preferred time",
     route: "Get directions",
+    slotTaken: "That time was just booked — please pick another slot.",
+    submitError: "We could not save your booking. Please try again or call us.",
+    sending: "Sending…",
   },
   ru: {
     heroTitle: "Быстрый шиномонтаж и автосервис в Таллинне",
