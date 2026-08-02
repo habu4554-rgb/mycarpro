@@ -3,6 +3,14 @@ import { useEffect, useMemo, useState } from "react";
 import {
   Wrench,
   Disc,
+  Car,
+  CarFront,
+  CarTaxiFront,
+  Caravan,
+  Truck,
+  Bus,
+  Fuel,
+  KeyRound,
   Phone,
   MapPin,
   Mail,
@@ -114,7 +122,7 @@ function Index() {
     setSubmitted(true);
   };
 
-  const whyIcons = [Timer, BadgeEuro, ShieldCheck, Award];
+  const whyIcons = [CarFront, CarTaxiFront, Car, KeyRound];
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -167,7 +175,7 @@ function Index() {
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(100deg, oklch(0.98 0.012 230 / 0.95) 0%, oklch(0.96 0.02 232 / 0.72) 32%, oklch(0.96 0.02 232 / 0.1) 58%, oklch(0.35 0.09 250 / 0.18) 100%), linear-gradient(180deg, transparent 72%, oklch(0.985 0.008 230) 100%)",
+              "linear-gradient(100deg, oklch(0.12 0.012 260 / 0.94) 0%, oklch(0.13 0.012 260 / 0.8) 38%, oklch(0.13 0.012 260 / 0.35) 70%, oklch(0.1 0.01 260 / 0.55) 100%), linear-gradient(180deg, oklch(0.12 0.012 260 / 0.5) 0%, transparent 40%, oklch(0.16 0.012 260) 100%)",
           }}
         />
         <div className="relative max-w-7xl mx-auto px-6 pt-32 pb-20 w-full">
@@ -264,20 +272,23 @@ function Index() {
 
           <div className="grid md:grid-cols-2 gap-6">
             <ServiceCard icon={<Disc className="h-7 w-7 text-primary-foreground" />} title={t.services.tire.title}>
-              {t.services.tire.items.map(([name, price]) => (
+              {t.services.tire.items.map(([name, price], i) => {
+                const Icon = [Car, Gauge, CarFront, Truck, Bus, Caravan, Disc][i] || Car;
+                return (
                 <li key={name} className="flex items-center justify-between py-3.5">
                   <span className="text-sm md:text-base flex items-center gap-3">
-                    <Check className="h-4 w-4 text-primary" />
+                    <Icon className="h-4 w-4 text-primary" />
                     {name}
                   </span>
                   <span className="font-display text-lg text-gradient-brand">{price}</span>
                 </li>
-              ))}
+                );
+              })}
             </ServiceCard>
 
-            <ServiceCard icon={<Wrench className="h-7 w-7 text-primary-foreground" />} title={t.services.auto.title}>
+            <ServiceCard icon={<CarFront className="h-7 w-7 text-primary-foreground" />} title={t.services.auto.title}>
               {t.services.auto.items.map(([name, price], i) => {
-                const Icon = [Droplet, Gauge, Wrench, Snowflake][i] || Sparkles;
+                const Icon = [Fuel, Gauge, Wrench, Snowflake][i] || Car;
                 return (
                   <li key={name} className="flex items-center justify-between py-3.5">
                     <span className="text-sm md:text-base flex items-center gap-3">
