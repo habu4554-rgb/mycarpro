@@ -500,7 +500,7 @@ function Index() {
                   </div>
                   <div className="grid grid-cols-3 sm:grid-cols-5 gap-2.5">
                     {TIME_SLOTS.map((slot) => {
-                      const taken = takenToday.includes(slot);
+                      const taken = isUnavailable(slot);
                       const active = form.time === slot && !taken;
                       return (
                         <button
