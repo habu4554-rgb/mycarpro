@@ -285,5 +285,8 @@ export const extras = {
     },
     timeLabel: "Sobiv kellaaeg",
     route: "Juhised kohale",
+    slotTaken: "See aeg broneeriti just ära — palun vali teine aeg.",
+    submitError: "Broneeringut ei õnnestunud salvestada. Proovi uuesti või helista meile.",
+    sending: "Saadan…",
   },
 } as const;
