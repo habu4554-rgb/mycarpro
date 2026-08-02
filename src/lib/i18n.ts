@@ -195,6 +195,19 @@ export const translations = {
 export const extras = {
   en: {
     heroTitle: "Tallinn's Fast Lane for Tyres & Car Care",
+    serviceLabel: "Auto repair service",
+    serviceNone: "None — tyre service only",
+    serviceOptions: [
+      "Oil & filter change",
+      "Computer diagnostics",
+      "Running repair",
+      "Air conditioning service",
+      "Brake pads / discs",
+      "Suspension check",
+      "Battery check & replacement",
+    ],
+    notesLabel: "Additional notes",
+    notesPlaceholder: "Anything else we should know about your car?",
     heroSub: "Same-day tyre fitting, honest diagnostics and expert repairs — book online in under a minute.",
     why: {
       title: "Why drivers choose us",
@@ -211,6 +224,19 @@ export const extras = {
   },
   ru: {
     heroTitle: "Быстрый шиномонтаж и автосервис в Таллинне",
+    serviceLabel: "Услуга авторемонта",
+    serviceNone: "Нет — только шиномонтаж",
+    serviceOptions: [
+      "Замена масла и фильтра",
+      "Компьютерная диагностика",
+      "Ходовой ремонт",
+      "Обслуживание кондиционера",
+      "Тормозные колодки / диски",
+      "Проверка подвески",
+      "Проверка и замена аккумулятора",
+    ],
+    notesLabel: "Дополнительная информация",
+    notesPlaceholder: "Что ещё нам стоит знать о вашем автомобиле?",
     heroSub: "Шиномонтаж в день обращения, честная диагностика и профессиональный ремонт — запись онлайн за минуту.",
     why: {
       title: "Почему выбирают нас",
@@ -227,6 +253,19 @@ export const extras = {
   },
   et: {
     heroTitle: "Kiire rehvivahetus ja autohooldus Tallinnas",
+    serviceLabel: "Autoremondi teenus",
+    serviceNone: "Puudub — ainult rehvivahetus",
+    serviceOptions: [
+      "Õli ja filtri vahetus",
+      "Arvutidiagnostika",
+      "Jooksev remont",
+      "Kliimaseadme hooldus",
+      "Piduriklotsid / kettad",
+      "Veermiku kontroll",
+      "Aku kontroll ja vahetus",
+    ],
+    notesLabel: "Lisainfo",
+    notesPlaceholder: "Mida peaksime sinu auto kohta veel teadma?",
     heroSub: "Rehvivahetus samal päeval, aus diagnostika ja professionaalne remont — broneeri online alla minutiga.",
     why: {
       title: "Miks meid valitakse",

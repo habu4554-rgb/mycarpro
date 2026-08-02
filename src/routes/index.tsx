@@ -32,6 +32,7 @@ import slide1 from "@/assets/slide-1.jpg";
 import slide2 from "@/assets/slide-2.jpg";
 import slide3 from "@/assets/slide-3.jpg";
 import { translations, extras, type Lang } from "@/lib/i18n";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -122,6 +123,8 @@ function Index() {
     time: "09:00",
     size: "R16",
     car: t.booking.carOptions[0] as string,
+    service: "",
+    notes: "",
   });
   const [submitted, setSubmitted] = useState(false);
 
@@ -140,16 +143,33 @@ function Index() {
 
   const cost = useMemo(() => calcCost(form.size, form.car), [form.size, form.car]);
 
-  const update = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
+  const update = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.date || !form.time || takenToday.includes(form.time)) return;
     const next = { ...booked, [form.date]: [...takenToday, form.time] };
     setBooked(next);
     try {
       localStorage.setItem(BOOKED_KEY, JSON.stringify(next));
+    } catch {
+      /* ignore */
+    }
+    // Persist to the connected Supabase project (best effort — UI still confirms offline)
+    try {
+      await supabase.from("bookings").insert({
+        name: form.name,
+        phone: form.phone,
+        email: form.email,
+        booking_date: form.date,
+        booking_time: form.time,
+        wheel_size: form.size,
+        car_type: form.car,
+        repair_service: form.service || null,
+        notes: form.notes || null,
+        estimated_cost: cost,
+      });
     } catch {
       /* ignore */
     }
@@ -384,6 +404,27 @@ function Index() {
                           <option key={c} value={c}>{c}</option>
                         ))}
                       </select>
+                    </Field>
+                  </div>
+                  <div className="md:col-span-2">
+                    <Field label={x.serviceLabel}>
+                      <select value={form.service} onChange={update("service")} className={inputCls}>
+                        <option value="">{x.serviceNone}</option>
+                        {x.serviceOptions.map((sv) => (
+                          <option key={sv} value={sv}>{sv}</option>
+                        ))}
+                      </select>
+                    </Field>
+                  </div>
+                  <div className="md:col-span-2">
+                    <Field label={x.notesLabel}>
+                      <textarea
+                        rows={4}
+                        value={form.notes}
+                        onChange={update("notes")}
+                        className={`${inputCls} resize-y min-h-[110px]`}
+                        placeholder={x.notesPlaceholder}
+                      />
                     </Field>
                   </div>
                 </div>
