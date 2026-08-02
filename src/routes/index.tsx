@@ -129,7 +129,7 @@ function Index() {
     email: "",
     date: "",
     time: "09:00",
-    size: "R16",
+    size: "",
     car: t.booking.carOptions[0] as string,
     service: "",
     notes: "",
@@ -199,7 +199,10 @@ function Index() {
   }, [form.date, form.time, takenToday, now]);
 
 
-  const cost = useMemo(() => calcCost(form.size, form.car), [form.size, form.car]);
+  const cost = useMemo(
+    () => (form.size ? calcCost(form.size, form.car) : 0),
+    [form.size, form.car],
+  );
 
   const update = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -235,11 +238,12 @@ function Index() {
       email: form.email,
       booking_date: form.date,
       booking_time: form.time,
-      wheel_size: form.size,
+      wheel_size: form.size || null,
       car_type: form.car,
       repair_service: form.service || null,
       notes: form.notes || null,
       estimated_cost: cost,
+      status: "pending",
     });
     // Refresh availability so the just-taken slot disappears immediately
     await loadSlots(form.date);
