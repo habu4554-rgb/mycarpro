@@ -221,6 +221,9 @@ export const extras = {
     },
     timeLabel: "Preferred time",
     route: "Get directions",
+    slotTaken: "That time was just booked — please pick another slot.",
+    submitError: "We could not save your booking. Please try again or call us.",
+    sending: "Sending…",
   },
   ru: {
     heroTitle: "Быстрый шиномонтаж и автосервис в Таллинне",
@@ -250,6 +253,9 @@ export const extras = {
     },
     timeLabel: "Удобное время",
     route: "Построить маршрут",
+    slotTaken: "Это время только что забронировали — выберите другое.",
+    submitError: "Не удалось сохранить бронь. Попробуйте снова или позвоните нам.",
+    sending: "Отправка…",
   },
   et: {
     heroTitle: "Kiire rehvivahetus ja autohooldus Tallinnas",
@@ -279,5 +285,8 @@ export const extras = {
     },
     timeLabel: "Sobiv kellaaeg",
     route: "Juhised kohale",
+    slotTaken: "See aeg broneeriti just ära — palun vali teine aeg.",
+    submitError: "Broneeringut ei õnnestunud salvestada. Proovi uuesti või helista meile.",
+    sending: "Saadan…",
   },
 } as const;

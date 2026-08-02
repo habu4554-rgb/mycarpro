@@ -135,6 +135,9 @@ function Index() {
     notes: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [confirmed, setConfirmed] = useState<{ date: string; time: string } | null>(null);
 
   // Times already booked for the selected date, loaded from Supabase
   const [takenToday, setTakenToday] = useState<string[]>([]);
@@ -204,16 +207,25 @@ function Index() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.date || !form.time || isUnavailable(form.time)) return;
+    setSubmitting(true);
+    setSubmitError(null);
 
     // Re-check right before writing so two people can't grab the same slot
-    const { data: clash } = await supabase
+    const { data: clash, error: clashError } = await supabase
       .from("bookings")
       .select("id")
       .eq("booking_date", form.date)
       .eq("booking_time", form.time)
       .limit(1);
+    if (clashError) {
+      setSubmitError(clashError.message);
+      setSubmitting(false);
+      return;
+    }
     if (clash && clash.length > 0) {
       await loadSlots(form.date);
+      setSubmitError(x.slotTaken);
+      setSubmitting(false);
       return;
     }
 
@@ -231,7 +243,12 @@ function Index() {
     });
     // Refresh availability so the just-taken slot disappears immediately
     await loadSlots(form.date);
-    if (error) return;
+    setSubmitting(false);
+    if (error) {
+      setSubmitError(error.message);
+      return;
+    }
+    setConfirmed({ date: form.date, time: form.time });
     setSubmitted(true);
   };
 
@@ -433,6 +450,11 @@ function Index() {
                   <Check className="h-8 w-8 text-primary-foreground" />
                 </div>
                 <p className="font-display text-2xl">{t.booking.success}</p>
+                {confirmed && (
+                  <p className="mt-3 text-sm text-muted-foreground">
+                    {confirmed.date} · {confirmed.time} · {cost}€
+                  </p>
+                )}
               </div>
             ) : (
               <>
@@ -526,6 +548,12 @@ function Index() {
                   )}
                 </div>
 
+                {submitError && (
+                  <p className="mt-6 rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                    {x.submitError} <span className="opacity-70">({submitError})</span>
+                  </p>
+                )}
+
                 <div className="mt-8 flex items-center justify-between flex-wrap gap-4 border-t border-border pt-6">
                   <div>
                     <div className="text-xs uppercase tracking-widest text-muted-foreground">{t.booking.cost}</div>
@@ -533,9 +561,10 @@ function Index() {
                   </div>
                   <button
                     type="submit"
-                    className="inline-flex items-center gap-2 rounded-xl bg-gradient-brand px-8 py-4 text-sm font-semibold text-primary-foreground shadow-brand hover:brightness-110 hover:-translate-y-0.5 transition"
+                    disabled={submitting}
+                    className="inline-flex items-center gap-2 rounded-xl bg-gradient-brand px-8 py-4 text-sm font-semibold text-primary-foreground shadow-brand hover:brightness-110 hover:-translate-y-0.5 transition disabled:opacity-60 disabled:translate-y-0"
                   >
-                    {t.booking.submit}
+                    {submitting ? x.sending : t.booking.submit}
                     <ChevronRight className="h-4 w-4" />
                   </button>
                 </div>
