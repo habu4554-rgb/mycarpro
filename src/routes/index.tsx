@@ -66,6 +66,7 @@ const ADDRESS_MAP =
   "https://www.google.com/maps/dir/?api=1&destination=Majaka+p%C3%B5ik+17%2C+Tallinn";
 const WHEEL_SIZES = ["R16", "R17", "R18", "R19", "R20", "R21", "R22"];
 const SLIDES = [slide1, slide2, slide3];
+const BOOKED_KEY = "mycarpro_booked_slots";
 const TIME_SLOTS = [
   "09:00",
   "10:00",
@@ -78,6 +79,18 @@ const TIME_SLOTS = [
   "17:00",
   "18:00",
 ];
+
+const SLOT_HINT: Record<Lang, string> = {
+  en: "Greyed-out times are already booked",
+  ru: "Серые часы уже забронированы",
+  et: "Hallid kellaajad on juba broneeritud",
+};
+
+const PICK_DATE: Record<Lang, string> = {
+  en: "Pick a date to see which slots are still free.",
+  ru: "Выберите дату, чтобы увидеть свободные часы.",
+  et: "Vali kuupäev, et näha vabu aegu.",
+};
 
 function calcCost(size: string, carType: string): number {
   const inch = parseInt(size.replace("R", ""), 10);
@@ -112,6 +125,19 @@ function Index() {
   });
   const [submitted, setSubmitted] = useState(false);
 
+  // Slots already taken, per date — persisted so a picked time greys out for everyone on this device
+  const [booked, setBooked] = useState<Record<string, string[]>>({});
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(BOOKED_KEY);
+      if (raw) setBooked(JSON.parse(raw));
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  const takenToday = form.date ? booked[form.date] ?? [] : [];
+
   const cost = useMemo(() => calcCost(form.size, form.car), [form.size, form.car]);
 
   const update = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
@@ -119,6 +145,14 @@ function Index() {
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!form.date || !form.time || takenToday.includes(form.time)) return;
+    const next = { ...booked, [form.date]: [...takenToday, form.time] };
+    setBooked(next);
+    try {
+      localStorage.setItem(BOOKED_KEY, JSON.stringify(next));
+    } catch {
+      /* ignore */
+    }
     setSubmitted(true);
   };
 
@@ -336,13 +370,6 @@ function Index() {
                   <Field label={t.booking.date}>
                     <input required type="date" value={form.date} onChange={update("date")} className={inputCls} />
                   </Field>
-                  <Field label={x.timeLabel}>
-                    <select required value={form.time} onChange={update("time")} className={inputCls}>
-                      {TIME_SLOTS.map((s) => (
-                        <option key={s} value={s}>{s}</option>
-                      ))}
-                    </select>
-                  </Field>
                   <Field label={t.booking.size}>
                     <select value={form.size} onChange={update("size")} className={inputCls}>
                       {WHEEL_SIZES.map((s) => (
@@ -359,6 +386,42 @@ function Index() {
                       </select>
                     </Field>
                   </div>
+                </div>
+
+                <div className="mt-7">
+                  <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
+                    <span className="block text-xs uppercase tracking-widest text-muted-foreground">
+                      {x.timeLabel}
+                    </span>
+                    <span className="text-xs text-muted-foreground/80">{SLOT_HINT[lang]}</span>
+                  </div>
+                  <div className="grid grid-cols-3 sm:grid-cols-5 gap-2.5">
+                    {TIME_SLOTS.map((slot) => {
+                      const taken = takenToday.includes(slot);
+                      const active = form.time === slot && !taken;
+                      return (
+                        <button
+                          key={slot}
+                          type="button"
+                          disabled={taken}
+                          aria-pressed={active}
+                          onClick={() => setForm((f) => ({ ...f, time: slot }))}
+                          className={`relative rounded-xl border px-2 py-3 text-sm font-semibold transition ${
+                            taken
+                              ? "border-border/60 bg-muted text-muted-foreground/50 line-through cursor-not-allowed"
+                              : active
+                                ? "border-transparent bg-gradient-brand text-primary-foreground shadow-brand"
+                                : "border-border bg-background text-foreground hover:border-primary hover:text-primary"
+                          }`}
+                        >
+                          {slot}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {!form.date && (
+                    <p className="mt-3 text-xs text-muted-foreground">{PICK_DATE[lang]}</p>
+                  )}
                 </div>
 
                 <div className="mt-8 flex items-center justify-between flex-wrap gap-4 border-t border-border pt-6">
