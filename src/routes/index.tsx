@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Wrench,
   Disc,
@@ -67,7 +67,15 @@ const ADDRESS_MAP =
   "https://www.google.com/maps/dir/?api=1&destination=Majaka+p%C3%B5ik+17%2C+Tallinn";
 const WHEEL_SIZES = ["R16", "R17", "R18", "R19", "R20", "R21", "R22"];
 const SLIDES = [slide1, slide2, slide3];
-const BOOKED_KEY = "mycarpro_booked_slots";
+// Supabase time columns can come back as "09:00:00" — compare on HH:MM
+function normalizeTime(v: string | null): string {
+  return (v ?? "").slice(0, 5);
+}
+
+function toDateInput(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
 const TIME_SLOTS = [
   "09:00",
   "10:00",
@@ -128,18 +136,68 @@ function Index() {
   });
   const [submitted, setSubmitted] = useState(false);
 
-  // Slots already taken, per date — persisted so a picked time greys out for everyone on this device
-  const [booked, setBooked] = useState<Record<string, string[]>>({});
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(BOOKED_KEY);
-      if (raw) setBooked(JSON.parse(raw));
-    } catch {
-      /* ignore */
+  // Times already booked for the selected date, loaded from Supabase
+  const [takenToday, setTakenToday] = useState<string[]>([]);
+  const [loadingSlots, setLoadingSlots] = useState(false);
+  const [slotError, setSlotError] = useState(false);
+
+  const loadSlots = useCallback(async (date: string) => {
+    if (!date) {
+      setTakenToday([]);
+      return;
     }
+    setLoadingSlots(true);
+    setSlotError(false);
+    const { data, error } = await supabase
+      .from("bookings")
+      .select("booking_time")
+      .eq("booking_date", date);
+    if (error) {
+      setSlotError(true);
+      setTakenToday([]);
+    } else {
+      setTakenToday(
+        (data ?? []).map((r: { booking_time: string | null }) =>
+          normalizeTime(r.booking_time),
+        ),
+      );
+    }
+    setLoadingSlots(false);
   }, []);
 
-  const takenToday = form.date ? booked[form.date] ?? [] : [];
+  useEffect(() => {
+    void loadSlots(form.date);
+  }, [form.date, loadSlots]);
+
+  // Slots in the past are unavailable when the chosen date is today
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 60_000);
+    return () => clearInterval(id);
+  }, []);
+
+  const isPast = useCallback(
+    (slot: string) => {
+      if (!form.date || form.date !== toDateInput(now)) return false;
+      const [h, m] = slot.split(":").map(Number);
+      return h * 60 + m <= now.getHours() * 60 + now.getMinutes();
+    },
+    [form.date, now],
+  );
+
+  const isUnavailable = useCallback(
+    (slot: string) => takenToday.includes(slot) || isPast(slot),
+    [takenToday, isPast],
+  );
+
+  // Keep the selection valid whenever availability changes
+  useEffect(() => {
+    if (!form.date) return;
+    if (isUnavailable(form.time)) {
+      const free = TIME_SLOTS.find((s) => !isUnavailable(s));
+      setForm((f) => ({ ...f, time: free ?? "" }));
+    }
+  }, [form.date, form.time, isUnavailable]);
 
   const cost = useMemo(() => calcCost(form.size, form.car), [form.size, form.car]);
 
@@ -148,31 +206,35 @@ function Index() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.date || !form.time || takenToday.includes(form.time)) return;
-    const next = { ...booked, [form.date]: [...takenToday, form.time] };
-    setBooked(next);
-    try {
-      localStorage.setItem(BOOKED_KEY, JSON.stringify(next));
-    } catch {
-      /* ignore */
+    if (!form.date || !form.time || isUnavailable(form.time)) return;
+
+    // Re-check right before writing so two people can't grab the same slot
+    const { data: clash } = await supabase
+      .from("bookings")
+      .select("id")
+      .eq("booking_date", form.date)
+      .eq("booking_time", form.time)
+      .limit(1);
+    if (clash && clash.length > 0) {
+      await loadSlots(form.date);
+      return;
     }
-    // Persist to the connected Supabase project (best effort — UI still confirms offline)
-    try {
-      await supabase.from("bookings").insert({
-        name: form.name,
-        phone: form.phone,
-        email: form.email,
-        booking_date: form.date,
-        booking_time: form.time,
-        wheel_size: form.size,
-        car_type: form.car,
-        repair_service: form.service || null,
-        notes: form.notes || null,
-        estimated_cost: cost,
-      });
-    } catch {
-      /* ignore */
-    }
+
+    const { error } = await supabase.from("bookings").insert({
+      name: form.name,
+      phone: form.phone,
+      email: form.email,
+      booking_date: form.date,
+      booking_time: form.time,
+      wheel_size: form.size,
+      car_type: form.car,
+      repair_service: form.service || null,
+      notes: form.notes || null,
+      estimated_cost: cost,
+    });
+    // Refresh availability so the just-taken slot disappears immediately
+    await loadSlots(form.date);
+    if (error) return;
     setSubmitted(true);
   };
 
@@ -388,7 +450,7 @@ function Index() {
                     <input required type="email" value={form.email} onChange={update("email")} className={inputCls} placeholder="you@mail.com" />
                   </Field>
                   <Field label={t.booking.date}>
-                    <input required type="date" value={form.date} onChange={update("date")} className={inputCls} />
+                    <input required type="date" min={toDateInput(now)} value={form.date} onChange={update("date")} className={inputCls} />
                   </Field>
                   <Field label={t.booking.size}>
                     <select value={form.size} onChange={update("size")} className={inputCls}>
@@ -434,11 +496,13 @@ function Index() {
                     <span className="block text-xs uppercase tracking-widest text-muted-foreground">
                       {x.timeLabel}
                     </span>
-                    <span className="text-xs text-muted-foreground/80">{SLOT_HINT[lang]}</span>
+                    <span className="text-xs text-muted-foreground/80">
+                      {loadingSlots ? "…" : slotError ? "" : SLOT_HINT[lang]}
+                    </span>
                   </div>
                   <div className="grid grid-cols-3 sm:grid-cols-5 gap-2.5">
                     {TIME_SLOTS.map((slot) => {
-                      const taken = takenToday.includes(slot);
+                      const taken = isUnavailable(slot);
                       const active = form.time === slot && !taken;
                       return (
                         <button
