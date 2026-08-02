@@ -101,6 +101,12 @@ const PICK_DATE: Record<Lang, string> = {
   et: "Vali kuupäev, et näha vabu aegu.",
 };
 
+const SIZE_NONE: Record<Lang, string> = {
+  en: "Select size — not needed for other services",
+  ru: "Выберите размер — не нужен для других услуг",
+  et: "Vali suurus — pole muude teenuste puhul vajalik",
+};
+
 function calcCost(size: string, carType: string): number {
   const inch = parseInt(size.replace("R", ""), 10);
   if (!inch) return 40;
@@ -129,7 +135,7 @@ function Index() {
     email: "",
     date: "",
     time: "09:00",
-    size: "R16",
+    size: "",
     car: t.booking.carOptions[0] as string,
     service: "",
     notes: "",
@@ -199,7 +205,10 @@ function Index() {
   }, [form.date, form.time, takenToday, now]);
 
 
-  const cost = useMemo(() => calcCost(form.size, form.car), [form.size, form.car]);
+  const cost = useMemo(
+    () => (form.size ? calcCost(form.size, form.car) : 0),
+    [form.size, form.car],
+  );
 
   const update = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -235,11 +244,12 @@ function Index() {
       email: form.email,
       booking_date: form.date,
       booking_time: form.time,
-      wheel_size: form.size,
+      wheel_size: form.size || null,
       car_type: form.car,
       repair_service: form.service || null,
       notes: form.notes || null,
       estimated_cost: cost,
+      status: "pending",
     });
     // Refresh availability so the just-taken slot disappears immediately
     await loadSlots(form.date);
@@ -473,6 +483,7 @@ function Index() {
                   </Field>
                   <Field label={t.booking.size}>
                     <select value={form.size} onChange={update("size")} className={inputCls}>
+                      <option value="">{SIZE_NONE[lang]}</option>
                       {WHEEL_SIZES.map((s) => (
                         <option key={s} value={s}>{s}</option>
                       ))}
