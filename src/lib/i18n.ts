@@ -253,6 +253,9 @@ export const extras = {
     },
     timeLabel: "Удобное время",
     route: "Построить маршрут",
+    slotTaken: "Это время только что забронировали — выберите другое.",
+    submitError: "Не удалось сохранить бронь. Попробуйте снова или позвоните нам.",
+    sending: "Отправка…",
   },
   et: {
     heroTitle: "Kiire rehvivahetus ja autohooldus Tallinnas",
