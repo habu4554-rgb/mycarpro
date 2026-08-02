@@ -67,7 +67,15 @@ const ADDRESS_MAP =
   "https://www.google.com/maps/dir/?api=1&destination=Majaka+p%C3%B5ik+17%2C+Tallinn";
 const WHEEL_SIZES = ["R16", "R17", "R18", "R19", "R20", "R21", "R22"];
 const SLIDES = [slide1, slide2, slide3];
-const BOOKED_KEY = "mycarpro_booked_slots";
+// Supabase time columns can come back as "09:00:00" — compare on HH:MM
+function normalizeTime(v: string | null): string {
+  return (v ?? "").slice(0, 5);
+}
+
+function toDateInput(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
 const TIME_SLOTS = [
   "09:00",
   "10:00",
