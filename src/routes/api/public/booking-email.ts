@@ -106,10 +106,23 @@ export const Route = createFileRoute("/api/public/booking-email")({
           sendEmail(apiKey, OWNER_EMAIL, `New booking: ${p.name} — ${when}`, ownerHtml),
         ]);
 
-        return new Response(JSON.stringify({ client, owner }), {
-          status: client.ok && owner.ok ? 200 : 502,
-          headers: { "content-type": "application/json" },
-        });
+        // Until a domain is verified in Resend, mail to non-owner addresses is
+        // rejected (403). Don't fail the booking for that — report per-email status.
+        return new Response(
+          JSON.stringify({
+            ok: owner.ok,
+            client,
+            owner,
+            note: client.ok
+              ? undefined
+              : "Customer email not sent — verify a domain at resend.com/domains and update the from address.",
+          }),
+          {
+            status: owner.ok ? 200 : 502,
+            headers: { "content-type": "application/json" },
+          },
+        );
+
       },
     },
   },
