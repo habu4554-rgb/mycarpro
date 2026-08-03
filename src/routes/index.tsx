@@ -238,7 +238,7 @@ function Index() {
       return;
     }
 
-    const { error } = await supabase.from("bookings").insert({
+    const row = {
       name: form.name,
       phone: form.phone,
       email: form.email,
@@ -250,7 +250,8 @@ function Index() {
       notes: form.notes || null,
       estimated_cost: cost,
       status: "pending",
-    });
+    };
+    const { error } = await supabase.from("bookings").insert(row);
     // Refresh availability so the just-taken slot disappears immediately
     await loadSlots(form.date);
     setSubmitting(false);
@@ -258,9 +259,16 @@ function Index() {
       setSubmitError(error.message);
       return;
     }
+    // Fire confirmation + owner notification emails (non-blocking for the user)
+    void fetch("/api/public/booking-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(row),
+    }).catch(() => {});
     setConfirmed({ date: form.date, time: form.time });
     setSubmitted(true);
   };
+
 
   const whyIcons = [CarFront, CarTaxiFront, Car, KeyRound];
 
