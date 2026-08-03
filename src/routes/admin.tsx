@@ -180,8 +180,8 @@ function Dashboard({ email }: { email: string }) {
       .select(
         "id, name, phone, email, booking_date, booking_time, repair_service, wheel_size, car_type, estimated_cost, notes, status",
       )
-      .order("booking_date", { ascending: true })
-      .order("booking_time", { ascending: true });
+      .order("booking_date", { ascending: false })
+      .order("booking_time", { ascending: false });
     if (error) setError(error.message);
     else setRows((data ?? []) as Booking[]);
     setLoading(false);
