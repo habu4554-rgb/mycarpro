@@ -149,6 +149,17 @@ function Index() {
   const [takenToday, setTakenToday] = useState<string[]>([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [slotError, setSlotError] = useState(false);
+  const [blockedDates, setBlockedDates] = useState<string[]>([]);
+
+  const loadBlockedDates = async () => {
+    const { data, error } = await supabase.from("blocked_dates").select("blocked_date");
+    if (error) return;
+    setBlockedDates((data ?? []).map((r: { blocked_date: string }) => r.blocked_date));
+  };
+
+  useEffect(() => {
+    void loadBlockedDates();
+  }, []);
 
   const loadSlots = async (date: string) => {
     if (!date) {
@@ -192,7 +203,10 @@ function Index() {
     return h * 60 + m <= now.getHours() * 60 + now.getMinutes();
   };
 
-  const isUnavailable = (slot: string) => takenToday.includes(slot) || isPast(slot);
+  const dateBlocked = !!form.date && blockedDates.includes(form.date);
+
+  const isUnavailable = (slot: string) =>
+    dateBlocked || takenToday.includes(slot) || isPast(slot);
 
   // Keep the selection valid whenever availability changes
   useEffect(() => {
@@ -215,7 +229,7 @@ function Index() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.date || !form.time || isUnavailable(form.time)) return;
+    if (!form.date || !form.time || dateBlocked || isUnavailable(form.time)) return;
     setSubmitting(true);
     setSubmitError(null);
 
@@ -487,7 +501,17 @@ function Index() {
                     <input required type="email" value={form.email} onChange={update("email")} className={inputCls} placeholder="you@mail.com" />
                   </Field>
                   <Field label={t.booking.date}>
-                    <input required type="date" min={toDateInput(now)} value={form.date} onChange={update("date")} className={inputCls} />
+                    <input
+                      required
+                      type="date"
+                      min={toDateInput(now)}
+                      value={form.date}
+                      onChange={update("date")}
+                      className={`${inputCls} ${dateBlocked ? "border-destructive" : ""}`}
+                    />
+                    {dateBlocked && (
+                      <p className="mt-2 text-xs font-medium text-destructive">{x.dateBlocked}</p>
+                    )}
                   </Field>
                   <Field label={t.booking.size}>
                     <select value={form.size} onChange={update("size")} className={inputCls}>
