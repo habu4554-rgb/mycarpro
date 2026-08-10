@@ -8,6 +8,7 @@ const REPLY_TO = "mycarproo@gmail.com";
 
 const payloadSchema = z.object({
   name: z.string().min(1).max(120),
+  phone: z.string().min(5).max(40),
   email: z.string().email(),
   booking_date: z.string().min(1).max(40),
   booking_time: z.string().min(1).max(20),
@@ -29,14 +30,26 @@ function serviceLine(p: Payload) {
 }
 
 function esc(v: unknown) {
-  return String(v ?? "").replace(/[<>&]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" })[c]!);
+  const entities: Record<string, string> = { "<": "&lt;", ">": "&gt;", "&": "&amp;" };
+  return String(v ?? "").replace(/[<>&]/g, (character) => entities[character] ?? character);
 }
 
-async function sendEmail(apiKey: string, to: string, subject: string, html: string) {
+async function sendEmail(
+  apiKey: string,
+  to: string,
+  replyTo: string,
+  subject: string,
+  html: string,
+  idempotencyKey: string,
+) {
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
-    body: JSON.stringify({ from: FROM, to: [to], reply_to: REPLY_TO, subject, html }),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+      "Idempotency-Key": idempotencyKey,
+    },
+    body: JSON.stringify({ from: FROM, to: [to], reply_to: replyTo, subject, html }),
   });
   const body = await res.text();
   if (!res.ok) {
@@ -51,7 +64,13 @@ export const Route = createFileRoute("/api/public/booking-email")({
     handlers: {
       POST: async ({ request }) => {
         const apiKey = process.env["RESEND_API_KEY"];
-        if (!apiKey) return new Response("RESEND_API_KEY is not configured", { status: 500 });
+        if (!apiKey) {
+          console.error("Booking email failed: RESEND_API_KEY is not configured");
+          return Response.json(
+            { ok: false, error: "Email service is not configured" },
+            { status: 503 },
+          );
+        }
 
         let raw: unknown;
         try {
@@ -96,6 +115,7 @@ export const Route = createFileRoute("/api/public/booking-email")({
             <table cellpadding="6">
               <tr><td><strong>Client</strong></td><td>${esc(p.name)}</td></tr>
               <tr><td><strong>Email</strong></td><td>${esc(p.email)}</td></tr>
+              <tr><td><strong>Phone</strong></td><td>${esc(p.phone)}</td></tr>
               <tr><td><strong>Service</strong></td><td>${esc(service)}</td></tr>
               <tr><td><strong>Date &amp; time</strong></td><td>${esc(when)}</td></tr>
               <tr><td><strong>Estimated cost</strong></td><td>${esc(cost)}</td></tr>
@@ -104,25 +124,28 @@ export const Route = createFileRoute("/api/public/booking-email")({
           </div>`;
 
         const [client, owner] = await Promise.all([
-          sendEmail(apiKey, p.email, `Your MyCar Pro booking — ${when}`, clientHtml),
-          sendEmail(apiKey, OWNER_EMAIL, `New booking: ${p.name} — ${when}`, ownerHtml),
+          sendEmail(
+            apiKey,
+            p.email,
+            REPLY_TO,
+            `Your MyCar Pro booking — ${when}`,
+            clientHtml,
+            `booking-client-${p.booking_date}-${p.booking_time}-${p.email}`,
+          ),
+          sendEmail(
+            apiKey,
+            OWNER_EMAIL,
+            p.email,
+            `New booking: ${p.name} — ${when}`,
+            ownerHtml,
+            `booking-owner-${p.booking_date}-${p.booking_time}-${p.email}`,
+          ),
         ]);
 
-        // Until a domain is verified in Resend, mail to non-owner addresses is
-        // rejected (403). Don't fail the booking for that — report per-email status.
-        return new Response(
-          JSON.stringify({
-            ok: owner.ok,
-            client,
-            owner,
-            note: client.ok
-              ? undefined
-              : "Customer email not sent — verify mycarpro.ee at resend.com/domains so bookings@mycarpro.ee can send.",
-          }),
-          {
-            status: owner.ok ? 200 : 502,
-            headers: { "content-type": "application/json" },
-          },
+        const ok = client.ok && owner.ok;
+        return Response.json(
+          { ok, client: { ok: client.ok, status: client.status }, owner: { ok: owner.ok, status: owner.status } },
+          { status: ok ? 200 : 502 },
         );
 
       },

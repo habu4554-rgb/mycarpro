@@ -281,13 +281,24 @@ function Index() {
       setSubmitError(error.message);
       return;
     }
-    // Fire confirmation + owner notification emails (non-blocking for the user)
-    void fetch("/api/public/booking-email", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(row),
-      keepalive: true,
-    }).catch(() => {});
+    // Wait for both messages so deployment or provider errors are never hidden.
+    try {
+      const emailResponse = await fetch("/api/public/booking-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(row),
+      });
+      if (!emailResponse.ok) {
+        const emailResult = (await emailResponse.json().catch(() => null)) as
+          | { error?: string }
+          | null;
+        throw new Error(emailResult?.error ?? `Email delivery failed (${emailResponse.status})`);
+      }
+    } catch (emailError) {
+      setSubmitError(
+        emailError instanceof Error ? emailError.message : "Email delivery failed",
+      );
+    }
 
     setConfirmed({ date: form.date, time: form.time });
     setSubmitted(true);
@@ -495,6 +506,11 @@ function Index() {
                 {confirmed && (
                   <p className="mt-3 text-sm text-muted-foreground">
                     {confirmed.date} · {confirmed.time} · {cost}€
+                  </p>
+                )}
+                {submitError && (
+                  <p className="mx-auto mt-5 max-w-lg rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                    Your booking was saved, but the confirmation email could not be sent. Please call us if you need immediate confirmation. ({submitError})
                   </p>
                 )}
               </div>
