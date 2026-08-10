@@ -281,13 +281,24 @@ function Index() {
       setSubmitError(error.message);
       return;
     }
-    // Fire confirmation + owner notification emails (non-blocking for the user)
-    void fetch("/api/public/booking-email", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(row),
-      keepalive: true,
-    }).catch(() => {});
+    // Wait for both messages so deployment or provider errors are never hidden.
+    try {
+      const emailResponse = await fetch("/api/public/booking-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(row),
+      });
+      if (!emailResponse.ok) {
+        const emailResult = (await emailResponse.json().catch(() => null)) as
+          | { error?: string }
+          | null;
+        throw new Error(emailResult?.error ?? `Email delivery failed (${emailResponse.status})`);
+      }
+    } catch (emailError) {
+      setSubmitError(
+        emailError instanceof Error ? emailError.message : "Email delivery failed",
+      );
+    }
 
     setConfirmed({ date: form.date, time: form.time });
     setSubmitted(true);
