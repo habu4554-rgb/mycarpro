@@ -508,6 +508,11 @@ function Index() {
                     {confirmed.date} · {confirmed.time} · {cost}€
                   </p>
                 )}
+                {submitError && (
+                  <p className="mx-auto mt-5 max-w-lg rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                    Your booking was saved, but the confirmation email could not be sent. Please call us if you need immediate confirmation. ({submitError})
+                  </p>
+                )}
               </div>
             ) : (
               <>
