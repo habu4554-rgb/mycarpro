@@ -253,17 +253,26 @@ function Dashboard({ email }: { email: string }) {
   const load = async () => {
     setLoading(true);
     setError(null);
-    const { data, error } = await supabase
+    const cols =
+      "id, name, phone, email, booking_date, booking_time, repair_service, wheel_size, car_type, estimated_cost, notes, status";
+    // Newest submissions first; fall back to appointment date/time if the
+    // table has no created_at column.
+    let { data, error } = await supabase
       .from("bookings")
-      .select(
-        "id, name, phone, email, booking_date, booking_time, repair_service, wheel_size, car_type, estimated_cost, notes, status",
-      )
-      .order("booking_date", { ascending: false })
-      .order("booking_time", { ascending: false });
+      .select(cols)
+      .order("created_at", { ascending: false });
+    if (error) {
+      ({ data, error } = await supabase
+        .from("bookings")
+        .select(cols)
+        .order("booking_date", { ascending: false })
+        .order("booking_time", { ascending: false }));
+    }
     if (error) setError(error.message);
     else setRows((data ?? []) as Booking[]);
     setLoading(false);
   };
+
 
   useEffect(() => {
     void load();
