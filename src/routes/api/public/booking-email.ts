@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 
-const OWNER_EMAIL = "habu4554@gmail.com";
-const FROM = "MyCar Pro <onboarding@resend.dev>";
+const OWNER_EMAIL = "mycarproo@gmail.com";
+// Sender uses the business domain (must be verified in Resend); replies go to the shop inbox.
+const FROM = "MyCar Pro <bookings@mycarpro.ee>";
+const REPLY_TO = "mycarproo@gmail.com";
 
 const payloadSchema = z.object({
   name: z.string().min(1).max(120),
@@ -34,7 +36,7 @@ async function sendEmail(apiKey: string, to: string, subject: string, html: stri
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
-    body: JSON.stringify({ from: FROM, to: [to], subject, html }),
+    body: JSON.stringify({ from: FROM, to: [to], reply_to: REPLY_TO, subject, html }),
   });
   const body = await res.text();
   if (!res.ok) {
@@ -84,7 +86,7 @@ export const Route = createFileRoute("/api/public/booking-email")({
               <tr><td><strong>Date &amp; time</strong></td><td>${esc(when)}</td></tr>
               <tr><td><strong>Estimated cost</strong></td><td>${esc(cost)}</td></tr>
             </table>
-            <p>Address: Majaka põik 17, Tallinn<br/>Phone: +372 57476733</p>
+            <p>Address: Majaka põik 17, Tallinn<br/>Phone: +372 57476733<br/>Email: mycarproo@gmail.com</p>
             <p>See you soon!<br/>MyCar Pro</p>
           </div>`;
 
@@ -115,7 +117,7 @@ export const Route = createFileRoute("/api/public/booking-email")({
             owner,
             note: client.ok
               ? undefined
-              : "Customer email not sent — verify a domain at resend.com/domains and update the from address.",
+              : "Customer email not sent — verify mycarpro.ee at resend.com/domains so bookings@mycarpro.ee can send.",
           }),
           {
             status: owner.ok ? 200 : 502,

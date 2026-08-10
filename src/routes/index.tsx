@@ -101,6 +101,12 @@ const PICK_DATE: Record<Lang, string> = {
   et: "Vali kuupäev, et näha vabu aegu.",
 };
 
+const NO_SLOTS: Record<Lang, string> = {
+  en: "No times left on this date — please choose another day.",
+  ru: "На эту дату свободных часов нет — выберите другой день.",
+  et: "Sel kuupäeval pole vabu aegu — palun vali teine päev.",
+};
+
 const SIZE_NONE: Record<Lang, string> = {
   en: "Select size — not needed for other services",
   ru: "Выберите размер — не нужен для других услуг",
@@ -207,6 +213,8 @@ function Index() {
 
   const isUnavailable = (slot: string) =>
     dateBlocked || takenToday.includes(slot) || isPast(slot);
+
+  const noFreeSlots = !!form.date && !loadingSlots && TIME_SLOTS.every((s) => isUnavailable(s));
 
   // Keep the selection valid whenever availability changes
   useEffect(() => {
@@ -589,6 +597,9 @@ function Index() {
                   {!form.date && (
                     <p className="mt-3 text-xs text-muted-foreground">{PICK_DATE[lang]}</p>
                   )}
+                  {noFreeSlots && !dateBlocked && (
+                    <p className="mt-3 text-xs font-medium text-destructive">{NO_SLOTS[lang]}</p>
+                  )}
                 </div>
 
                 {submitError && (
@@ -604,7 +615,7 @@ function Index() {
                   </div>
                   <button
                     type="submit"
-                    disabled={submitting}
+                    disabled={submitting || !form.date || !form.time || dateBlocked || noFreeSlots}
                     className="inline-flex items-center gap-2 rounded-xl bg-gradient-brand px-8 py-4 text-sm font-semibold text-primary-foreground shadow-brand hover:brightness-110 hover:-translate-y-0.5 transition disabled:opacity-60 disabled:translate-y-0"
                   >
                     {submitting ? x.sending : t.booking.submit}
