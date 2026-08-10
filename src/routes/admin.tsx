@@ -105,18 +105,35 @@ function Admin() {
 }
 
 function SignIn() {
+  const [mode, setMode] = useState<"signin" | "forgot">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [resetSent, setResetSent] = useState(false);
 
-  const submit = async (e: React.FormEvent) => {
+  const submitSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
     setError(null);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setBusy(false);
     if (error) setError(error.message);
+  };
+
+  const submitReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBusy(true);
+    setError(null);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setBusy(false);
+    if (error) {
+      setError(error.message);
+    } else {
+      setResetSent(true);
+    }
   };
 
   return (
@@ -128,38 +145,96 @@ function SignIn() {
         </div>
         <h1 className="font-display text-3xl mb-2">Admin Dashboard</h1>
         <p className="text-sm text-muted-foreground mb-7">
-          Sign in with your MyCar Pro staff account to manage bookings.
+          {mode === "forgot"
+            ? "Enter your staff email and we'll send you a secure recovery link."
+            : "Sign in with your MyCar Pro staff account to manage bookings."}
         </p>
-        <form onSubmit={submit} className="space-y-4">
-          <input
-            required
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@mycarpro.ee"
-            className={inputCls}
-          />
-          <input
-            required
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            className={inputCls}
-          />
-          {error && (
-            <p className="rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-2.5 text-sm text-destructive">
-              {error}
-            </p>
-          )}
-          <button
-            type="submit"
-            disabled={busy}
-            className="w-full rounded-xl bg-gradient-brand px-6 py-3.5 text-sm font-semibold text-primary-foreground shadow-brand hover:brightness-110 transition disabled:opacity-60"
-          >
-            {busy ? "Signing in…" : "Sign in"}
-          </button>
-        </form>
+
+        {mode === "signin" ? (
+          <form onSubmit={submitSignIn} className="space-y-4">
+            <input
+              required
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@mycarpro.ee"
+              className={inputCls}
+            />
+            <input
+              required
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              className={inputCls}
+            />
+            {error && (
+              <p className="rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-2.5 text-sm text-destructive">
+                {error}
+              </p>
+            )}
+            <button
+              type="submit"
+              disabled={busy}
+              className="w-full rounded-xl bg-gradient-brand px-6 py-3.5 text-sm font-semibold text-primary-foreground shadow-brand hover:brightness-110 transition disabled:opacity-60"
+            >
+              {busy ? "Signing in…" : "Sign in"}
+            </button>
+            <div className="pt-1 text-center">
+              <button
+                type="button"
+                onClick={() => {
+                  setMode("forgot");
+                  setError(null);
+                  setResetSent(false);
+                }}
+                className="text-sm text-muted-foreground underline underline-offset-4 hover:text-primary transition"
+              >
+                Forgot password?
+              </button>
+            </div>
+          </form>
+        ) : (
+          <form onSubmit={submitReset} className="space-y-4">
+            <input
+              required
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@mycarpro.ee"
+              className={inputCls}
+            />
+            {resetSent ? (
+              <div className="rounded-xl border border-emerald-400/40 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-300">
+                Recovery link sent. Check your inbox (and spam folder) and follow the link to reset your password.
+              </div>
+            ) : error ? (
+              <p className="rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-2.5 text-sm text-destructive">
+                {error}
+              </p>
+            ) : null}
+            <button
+              type="submit"
+              disabled={busy || resetSent}
+              className="w-full rounded-xl bg-gradient-brand px-6 py-3.5 text-sm font-semibold text-primary-foreground shadow-brand hover:brightness-110 transition disabled:opacity-60"
+            >
+              {busy ? "Sending…" : resetSent ? "Sent" : "Send recovery link"}
+            </button>
+            <div className="pt-1 text-center">
+              <button
+                type="button"
+                onClick={() => {
+                  setMode("signin");
+                  setError(null);
+                  setResetSent(false);
+                }}
+                className="text-sm text-muted-foreground underline underline-offset-4 hover:text-primary transition"
+              >
+                Back to sign in
+              </button>
+            </div>
+          </form>
+        )}
       </div>
     </div>
   );
