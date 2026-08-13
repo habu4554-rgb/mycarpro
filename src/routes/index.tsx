@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import {
-  Wrench,
   Disc,
   Car,
   CarFront,
@@ -9,7 +8,6 @@ import {
   Caravan,
   Truck,
   Bus,
-  Fuel,
   KeyRound,
   Phone,
   MapPin,
@@ -19,8 +17,6 @@ import {
   Check,
   ChevronRight,
   Gauge,
-  Snowflake,
-  Droplet,
   Sparkles,
   ShieldCheck,
   Timer,
@@ -143,7 +139,6 @@ function Index() {
     time: "09:00",
     size: "",
     car: t.booking.carOptions[0] as string,
-    service: "",
     notes: "",
   });
   const [submitted, setSubmitted] = useState(false);
@@ -268,7 +263,6 @@ function Index() {
       booking_time: form.time,
       wheel_size: form.size || null,
       car_type: form.car,
-      repair_service: form.service || null,
       notes: form.notes || null,
       estimated_cost: cost,
       status: "pending",
@@ -453,7 +447,7 @@ function Index() {
             <p className="text-muted-foreground max-w-md">{t.services.subtitle}</p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid gap-6 max-w-2xl mx-auto">
             <ServiceCard icon={<Disc className="h-7 w-7 text-primary-foreground" />} title={t.services.tire.title}>
               {t.services.tire.items.map(([name, price], i) => {
                 const Icon = [Car, Gauge, CarFront, Truck, Bus, Caravan, Disc][i] || Car;
@@ -465,21 +459,6 @@ function Index() {
                   </span>
                   <span className="font-display text-lg text-gradient-brand">{price}</span>
                 </li>
-                );
-              })}
-            </ServiceCard>
-
-            <ServiceCard icon={<CarFront className="h-7 w-7 text-primary-foreground" />} title={t.services.auto.title}>
-              {t.services.auto.items.map(([name, price], i) => {
-                const Icon = [Fuel, Gauge, Wrench, Snowflake][i] || Car;
-                return (
-                  <li key={name} className="flex items-center justify-between py-3.5">
-                    <span className="text-sm md:text-base flex items-center gap-3">
-                      <Icon className="h-4 w-4 text-primary" />
-                      {name}
-                    </span>
-                    <span className="font-display text-lg text-gradient-brand">{price}</span>
-                  </li>
                 );
               })}
             </ServiceCard>
@@ -539,29 +518,50 @@ function Index() {
                       <p className="mt-2 text-xs font-medium text-destructive">{x.dateBlocked}</p>
                     )}
                   </Field>
-                  <Field label={t.booking.size}>
-                    <select value={form.size} onChange={update("size")} className={inputCls}>
-                      <option value="">{SIZE_NONE[lang]}</option>
-                      {WHEEL_SIZES.map((s) => (
-                        <option key={s} value={s}>{s}</option>
-                      ))}
-                    </select>
-                  </Field>
+                  <div className="md:col-span-2">
+                    <Field label={t.booking.size}>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                        {WHEEL_SIZES.map((s) => {
+                          const active = form.size === s;
+                          return (
+                            <button
+                              key={s}
+                              type="button"
+                              aria-pressed={active}
+                              onClick={() => setForm((f) => ({ ...f, size: active ? "" : s }))}
+                              className={`flex items-center gap-3 rounded-xl border px-3 py-3 text-left transition ${
+                                active
+                                  ? "border-primary bg-primary/10 shadow-brand"
+                                  : "border-border bg-background hover:border-primary"
+                              }`}
+                            >
+                              <span
+                                className={`grid place-items-center h-5 w-5 shrink-0 rounded-md border ${
+                                  active ? "border-transparent bg-gradient-brand" : "border-border"
+                                }`}
+                              >
+                                {active && <Check className="h-3.5 w-3.5 text-primary-foreground" />}
+                              </span>
+                              <span className="min-w-0">
+                                <span className="block text-sm font-semibold">{s}</span>
+                                <span className="block text-xs text-muted-foreground">
+                                  {calcCost(s, form.car)}€
+                                </span>
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                      {!form.size && (
+                        <p className="mt-2 text-xs text-muted-foreground">{SIZE_NONE[lang]}</p>
+                      )}
+                    </Field>
+                  </div>
                   <div className="md:col-span-2">
                     <Field label={t.booking.car}>
                       <select value={form.car} onChange={update("car")} className={inputCls}>
                         {t.booking.carOptions.map((c) => (
                           <option key={c} value={c}>{c}</option>
-                        ))}
-                      </select>
-                    </Field>
-                  </div>
-                  <div className="md:col-span-2">
-                    <Field label={x.serviceLabel}>
-                      <select value={form.service} onChange={update("service")} className={inputCls}>
-                        <option value="">{x.serviceNone}</option>
-                        {x.serviceOptions.map((sv) => (
-                          <option key={sv} value={sv}>{sv}</option>
                         ))}
                       </select>
                     </Field>
