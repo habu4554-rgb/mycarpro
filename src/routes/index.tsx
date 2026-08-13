@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import {
-  Wrench,
   Disc,
   Car,
   CarFront,
@@ -9,7 +8,6 @@ import {
   Caravan,
   Truck,
   Bus,
-  Fuel,
   KeyRound,
   Phone,
   MapPin,
@@ -19,8 +17,6 @@ import {
   Check,
   ChevronRight,
   Gauge,
-  Snowflake,
-  Droplet,
   Sparkles,
   ShieldCheck,
   Timer,
