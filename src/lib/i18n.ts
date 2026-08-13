@@ -60,7 +60,7 @@ export const translations = {
     contacts: {
       title: "Contacts",
       address: "Majaka põik 17, Tallinn",
-      hours: "Mon–Fri 9:00–19:00 · Sat 10:00–16:00",
+      hours: "Mon–Sun 9:00–19:00",
     },
     footer: "© 2026 MyCar Pro. All rights reserved.",
   },
