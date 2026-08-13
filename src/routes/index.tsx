@@ -143,7 +143,6 @@ function Index() {
     time: "09:00",
     size: "",
     car: t.booking.carOptions[0] as string,
-    service: "",
     notes: "",
   });
   const [submitted, setSubmitted] = useState(false);
@@ -268,7 +267,6 @@ function Index() {
       booking_time: form.time,
       wheel_size: form.size || null,
       car_type: form.car,
-      repair_service: form.service || null,
       notes: form.notes || null,
       estimated_cost: cost,
       status: "pending",
