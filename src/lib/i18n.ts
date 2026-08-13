@@ -123,7 +123,7 @@ export const translations = {
     contacts: {
       title: "Контакты",
       address: "Majaka põik 17, Таллинн",
-      hours: "Пн–Пт 9:00–19:00 · Сб 10:00–16:00",
+      hours: "Пн–Вс 9:00–19:00",
     },
     footer: "© 2026 MyCar Pro. Все права защищены.",
   },
