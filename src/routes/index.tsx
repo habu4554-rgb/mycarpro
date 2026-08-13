@@ -518,6 +518,46 @@ function Index() {
                       <p className="mt-2 text-xs font-medium text-destructive">{x.dateBlocked}</p>
                     )}
                   </Field>
+                  <div className="md:col-span-2 mt-1">
+                    <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
+                      <span className="block text-xs uppercase tracking-widest text-muted-foreground">
+                        {x.timeLabel}
+                      </span>
+                      <span className="text-xs text-muted-foreground/80">
+                        {loadingSlots ? "…" : slotError ? "" : SLOT_HINT[lang]}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-3 sm:grid-cols-5 gap-2.5">
+                      {TIME_SLOTS.map((slot) => {
+                        const taken = isUnavailable(slot);
+                        const active = form.time === slot && !taken;
+                        return (
+                          <button
+                            key={slot}
+                            type="button"
+                            disabled={taken}
+                            aria-pressed={active}
+                            onClick={() => setForm((f) => ({ ...f, time: slot }))}
+                            className={`relative rounded-xl border px-2 py-3 text-sm font-semibold transition ${
+                              taken
+                                ? "border-border/60 bg-muted text-muted-foreground/50 line-through cursor-not-allowed"
+                                : active
+                                  ? "border-transparent bg-gradient-brand text-primary-foreground shadow-brand"
+                                  : "border-border bg-background text-foreground hover:border-primary hover:text-primary"
+                            }`}
+                          >
+                            {slot}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {!form.date && (
+                      <p className="mt-3 text-xs text-muted-foreground">{PICK_DATE[lang]}</p>
+                    )}
+                    {noFreeSlots && !dateBlocked && (
+                      <p className="mt-3 text-xs font-medium text-destructive">{NO_SLOTS[lang]}</p>
+                    )}
+                  </div>
                   <div className="md:col-span-2">
                     <Field label={t.booking.size}>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
@@ -577,47 +617,6 @@ function Index() {
                       />
                     </Field>
                   </div>
-                </div>
-
-                <div className="mt-7">
-                  <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
-                    <span className="block text-xs uppercase tracking-widest text-muted-foreground">
-                      {x.timeLabel}
-                    </span>
-                    <span className="text-xs text-muted-foreground/80">
-                      {loadingSlots ? "…" : slotError ? "" : SLOT_HINT[lang]}
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-3 sm:grid-cols-5 gap-2.5">
-                    {TIME_SLOTS.map((slot) => {
-                      const taken = isUnavailable(slot);
-                      const active = form.time === slot && !taken;
-                      return (
-                        <button
-                          key={slot}
-                          type="button"
-                          disabled={taken}
-                          aria-pressed={active}
-                          onClick={() => setForm((f) => ({ ...f, time: slot }))}
-                          className={`relative rounded-xl border px-2 py-3 text-sm font-semibold transition ${
-                            taken
-                              ? "border-border/60 bg-muted text-muted-foreground/50 line-through cursor-not-allowed"
-                              : active
-                                ? "border-transparent bg-gradient-brand text-primary-foreground shadow-brand"
-                                : "border-border bg-background text-foreground hover:border-primary hover:text-primary"
-                          }`}
-                        >
-                          {slot}
-                        </button>
-                      );
-                    })}
-                  </div>
-                  {!form.date && (
-                    <p className="mt-3 text-xs text-muted-foreground">{PICK_DATE[lang]}</p>
-                  )}
-                  {noFreeSlots && !dateBlocked && (
-                    <p className="mt-3 text-xs font-medium text-destructive">{NO_SLOTS[lang]}</p>
-                  )}
                 </div>
 
                 {submitError && (
