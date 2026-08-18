@@ -370,10 +370,10 @@ export function HomePage({ initialLang }: { initialLang: Lang }) {
                 className={`px-3 py-1 rounded-full font-semibold uppercase transition-colors ${
                   lang === l ? "bg-gradient-brand text-primary-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
-
               >
                 {l}
-              </button>
+              </a>
+
             ))}
           </div>
         </div>
