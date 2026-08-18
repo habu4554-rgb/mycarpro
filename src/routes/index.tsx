@@ -39,6 +39,9 @@ const SITE = "https://mycarpro.ee";
 
 export const LANG_PATH: Record<Lang, string> = { en: "/en", ru: "/", et: "/et" };
 
+const LANG_FLAG: Record<Lang, string> = { en: "🇬🇧", ru: "🇷🇺", et: "🇪🇪" };
+const LANG_LABEL: Record<Lang, string> = { en: "English", ru: "Русский", et: "Eesti" };
+
 
 const HEAD_COPY: Record<Lang, { title: string; description: string }> = {
   en: {
@@ -47,9 +50,9 @@ const HEAD_COPY: Record<Lang, { title: string; description: string }> = {
       "Fast tyre fitting from 40€ and expert car repair in Tallinn. Transparent prices, certified mechanics, warranty on every job — book your slot online in under a minute.",
   },
   ru: {
-    title: "MyCar Pro — Шиномонтаж и автосервис в Таллинне",
+    title: "МайКарПро — Автосервис и шиномонтаж в Таллине | Majaka põik 17",
     description:
-      "Быстрый шиномонтаж от 40€ и профессиональный ремонт автомобилей в Таллинне. Прозрачные цены, опытные мастера, гарантия на работы — онлайн-запись занимает меньше минуты.",
+      "Профессиональный ремонт автомобилей и шиномонтаж в Таллине. Шиномонтаж от 40€. Запись онлайн на Majaka põik 17.",
   },
   et: {
     title: "MyCar Pro — Rehvivahetus ja autoteenindus Tallinnas",
@@ -357,11 +360,12 @@ export function HomePage({ initialLang }: { initialLang: Lang }) {
             <a href="#contacts" className="hover:text-primary transition-colors">{t.nav.contacts}</a>
           </nav>
           <div className="flex items-center gap-1 rounded-full border border-border bg-surface p-1 text-xs">
-            {(["en", "ru", "et"] as Lang[]).map((l) => (
+            {(["ru", "et"] as Lang[]).map((l) => (
               <a
                 key={l}
                 href={LANG_PATH[l]}
                 hrefLang={l}
+                aria-label={LANG_LABEL[l]}
                 onClick={(e) => {
                   e.preventDefault();
                   setLang(l);
@@ -369,13 +373,13 @@ export function HomePage({ initialLang }: { initialLang: Lang }) {
                     window.history.replaceState(null, "", LANG_PATH[l]);
                   }
                 }}
-                className={`px-3 py-1 rounded-full font-semibold uppercase transition-colors ${
+                className={`flex items-center gap-1.5 px-3 py-1 rounded-full font-semibold uppercase transition-colors ${
                   lang === l ? "bg-gradient-brand text-primary-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
+                <span aria-hidden="true">{LANG_FLAG[l]}</span>
                 {l}
               </a>
-
             ))}
           </div>
         </div>
