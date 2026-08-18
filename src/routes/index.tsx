@@ -39,6 +39,9 @@ const SITE = "https://mycarpro.ee";
 
 export const LANG_PATH: Record<Lang, string> = { en: "/en", ru: "/", et: "/et" };
 
+const LANG_FLAG: Record<Lang, string> = { en: "🇬🇧", ru: "🇷🇺", et: "🇪🇪" };
+const LANG_LABEL: Record<Lang, string> = { en: "English", ru: "Русский", et: "Eesti" };
+
 
 const HEAD_COPY: Record<Lang, { title: string; description: string }> = {
   en: {
