@@ -356,12 +356,21 @@ export function HomePage({ initialLang }: { initialLang: Lang }) {
           </nav>
           <div className="flex items-center gap-1 rounded-full border border-border bg-surface p-1 text-xs">
             {(["en", "ru", "et"] as Lang[]).map((l) => (
-              <button
+              <a
                 key={l}
-                onClick={() => setLang(l)}
+                href={LANG_PATH[l]}
+                hrefLang={l}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setLang(l);
+                  if (typeof window !== "undefined") {
+                    window.history.replaceState(null, "", LANG_PATH[l]);
+                  }
+                }}
                 className={`px-3 py-1 rounded-full font-semibold uppercase transition-colors ${
                   lang === l ? "bg-gradient-brand text-primary-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
+
               >
                 {l}
               </button>
