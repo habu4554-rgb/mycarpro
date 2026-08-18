@@ -1,7 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { HomePage, localizedHead } from "./index";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/ru")({
-  component: () => <HomePage initialLang="ru" />,
-  head: () => localizedHead("ru"),
+  beforeLoad: () => {
+    throw redirect({ to: "/", statusCode: 301 });
+  },
 });
