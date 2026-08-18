@@ -50,9 +50,9 @@ const HEAD_COPY: Record<Lang, { title: string; description: string }> = {
       "Fast tyre fitting from 40€ and expert car repair in Tallinn. Transparent prices, certified mechanics, warranty on every job — book your slot online in under a minute.",
   },
   ru: {
-    title: "MyCar Pro — Шиномонтаж и автосервис в Таллинне",
+    title: "МайКарПро — Автосервис и шиномонтаж в Таллине | Majaka põik 17",
     description:
-      "Быстрый шиномонтаж от 40€ и профессиональный ремонт автомобилей в Таллинне. Прозрачные цены, опытные мастера, гарантия на работы — онлайн-запись занимает меньше минуты.",
+      "Профессиональный ремонт автомобилей и шиномонтаж в Таллине. Шиномонтаж от 40€. Запись онлайн на Majaka põik 17.",
   },
   et: {
     title: "MyCar Pro — Rehvivahetus ja autoteenindus Tallinnas",
