@@ -31,13 +31,14 @@ import { translations, extras, type Lang } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
-  component: () => <HomePage initialLang="en" />,
-  head: () => localizedHead("en"),
+  component: () => <HomePage initialLang="ru" />,
+  head: () => localizedHead("ru"),
 });
 
 const SITE = "https://mycarpro.ee";
 
-export const LANG_PATH: Record<Lang, string> = { en: "/", ru: "/ru", et: "/et" };
+export const LANG_PATH: Record<Lang, string> = { en: "/en", ru: "/", et: "/et" };
+
 
 const HEAD_COPY: Record<Lang, { title: string; description: string }> = {
   en: {
