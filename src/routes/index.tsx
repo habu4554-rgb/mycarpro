@@ -31,13 +31,14 @@ import { translations, extras, type Lang } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
-  component: () => <HomePage initialLang="en" />,
-  head: () => localizedHead("en"),
+  component: () => <HomePage initialLang="ru" />,
+  head: () => localizedHead("ru"),
 });
 
 const SITE = "https://mycarpro.ee";
 
-export const LANG_PATH: Record<Lang, string> = { en: "/", ru: "/ru", et: "/et" };
+export const LANG_PATH: Record<Lang, string> = { en: "/en", ru: "/", et: "/et" };
+
 
 const HEAD_COPY: Record<Lang, { title: string; description: string }> = {
   en: {
@@ -76,10 +77,11 @@ export function localizedHead(lang: Lang) {
     ],
     links: [
       { rel: "canonical", href: url },
-      { rel: "alternate", hreflang: "en", href: `${SITE}/` },
-      { rel: "alternate", hreflang: "ru", href: `${SITE}/ru` },
+      { rel: "alternate", hreflang: "ru", href: `${SITE}/` },
+      { rel: "alternate", hreflang: "en", href: `${SITE}/en` },
       { rel: "alternate", hreflang: "et", href: `${SITE}/et` },
       { rel: "alternate", hreflang: "x-default", href: `${SITE}/` },
+
     ],
   };
 }

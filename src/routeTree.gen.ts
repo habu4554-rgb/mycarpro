@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as RuRouteImport } from './routes/ru'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as EtRouteImport } from './routes/et'
+import { Route as EnRouteImport } from './routes/en'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiPublicBookingEmailRouteImport } from './routes/api/public/booking-email'
@@ -29,6 +30,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const EtRoute = EtRouteImport.update({
   id: '/et',
   path: '/et',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EnRoute = EnRouteImport.update({
+  id: '/en',
+  path: '/en',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -50,6 +56,7 @@ const ApiPublicBookingEmailRoute = ApiPublicBookingEmailRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/en': typeof EnRoute
   '/et': typeof EtRoute
   '/reset-password': typeof ResetPasswordRoute
   '/ru': typeof RuRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/en': typeof EnRoute
   '/et': typeof EtRoute
   '/reset-password': typeof ResetPasswordRoute
   '/ru': typeof RuRoute
@@ -67,6 +75,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/en': typeof EnRoute
   '/et': typeof EtRoute
   '/reset-password': typeof ResetPasswordRoute
   '/ru': typeof RuRoute
@@ -77,6 +86,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/en'
     | '/et'
     | '/reset-password'
     | '/ru'
@@ -85,6 +95,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/admin'
+    | '/en'
     | '/et'
     | '/reset-password'
     | '/ru'
@@ -93,6 +104,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
+    | '/en'
     | '/et'
     | '/reset-password'
     | '/ru'
@@ -102,6 +114,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
+  EnRoute: typeof EnRoute
   EtRoute: typeof EtRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   RuRoute: typeof RuRoute
@@ -131,6 +144,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EtRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/en': {
+      id: '/en'
+      path: '/en'
+      fullPath: '/en'
+      preLoaderRoute: typeof EnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin': {
       id: '/admin'
       path: '/admin'
@@ -158,6 +178,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
+  EnRoute: EnRoute,
   EtRoute: EtRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   RuRoute: RuRoute,
