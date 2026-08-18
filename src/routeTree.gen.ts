@@ -9,11 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RuRouteImport } from './routes/ru'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiPublicBookingEmailRouteImport } from './routes/api/public/booking-email'
 
+const RuRoute = RuRouteImport.update({
+  id: '/ru',
+  path: '/ru',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
@@ -39,12 +45,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/ru': typeof RuRoute
   '/api/public/booking-email': typeof ApiPublicBookingEmailRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/ru': typeof RuRoute
   '/api/public/booking-email': typeof ApiPublicBookingEmailRoute
 }
 export interface FileRoutesById {
@@ -52,18 +60,25 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/ru': typeof RuRoute
   '/api/public/booking-email': typeof ApiPublicBookingEmailRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/reset-password' | '/api/public/booking-email'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/reset-password'
+    | '/ru'
+    | '/api/public/booking-email'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/reset-password' | '/api/public/booking-email'
+  to: '/' | '/admin' | '/reset-password' | '/ru' | '/api/public/booking-email'
   id:
     | '__root__'
     | '/'
     | '/admin'
     | '/reset-password'
+    | '/ru'
     | '/api/public/booking-email'
   fileRoutesById: FileRoutesById
 }
@@ -71,11 +86,19 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  RuRoute: typeof RuRoute
   ApiPublicBookingEmailRoute: typeof ApiPublicBookingEmailRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/ru': {
+      id: '/ru'
+      path: '/ru'
+      fullPath: '/ru'
+      preLoaderRoute: typeof RuRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
@@ -111,6 +134,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  RuRoute: RuRoute,
   ApiPublicBookingEmailRoute: ApiPublicBookingEmailRoute,
 }
 export const routeTree = rootRouteImport
