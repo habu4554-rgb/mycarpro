@@ -31,30 +31,59 @@ import { translations, extras, type Lang } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
-  component: Index,
-  head: () => ({
-    meta: [
-      { title: "MyCar Pro — Tyre Fitting & Car Service in Tallinn, Same Day" },
-      {
-        name: "description",
-        content:
-          "Fast tyre fitting from 40€ and expert car repair in Tallinn. Transparent prices, certified mechanics, warranty on every job — book your slot online in under a minute.",
-      },
-      { property: "og:title", content: "MyCar Pro — Tyre Fitting & Car Service in Tallinn" },
-      {
-        property: "og:description",
-        content:
-          "Same-day tyre fitting, diagnostics and repairs in Tallinn. Transparent pricing and online booking.",
-      },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://thecreamyspot-hub.lovable.app/" },
-      { property: "og:image", content: "https://thecreamyspot-hub.lovable.app/og-image.jpg" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: "https://thecreamyspot-hub.lovable.app/og-image.jpg" },
-    ],
-    links: [{ rel: "canonical", href: "https://thecreamyspot-hub.lovable.app/" }],
-  }),
+  component: () => <HomePage initialLang="en" />,
+  head: () => localizedHead("en"),
 });
+
+const SITE = "https://mycarpro.ee";
+
+export const LANG_PATH: Record<Lang, string> = { en: "/", ru: "/ru", et: "/et" };
+
+const HEAD_COPY: Record<Lang, { title: string; description: string }> = {
+  en: {
+    title: "MyCar Pro — Tyre Fitting & Car Service in Tallinn, Same Day",
+    description:
+      "Fast tyre fitting from 40€ and expert car repair in Tallinn. Transparent prices, certified mechanics, warranty on every job — book your slot online in under a minute.",
+  },
+  ru: {
+    title: "MyCar Pro — Шиномонтаж и автосервис в Таллинне",
+    description:
+      "Быстрый шиномонтаж от 40€ и профессиональный ремонт автомобилей в Таллинне. Прозрачные цены, опытные мастера, гарантия на работы — онлайн-запись занимает меньше минуты.",
+  },
+  et: {
+    title: "MyCar Pro — Rehvivahetus ja autoteenindus Tallinnas",
+    description:
+      "Kiire rehvivahetus alates 40€ ja professionaalne autoremont Tallinnas. Läbipaistvad hinnad, sertifitseeritud mehaanikud ja garantii — broneeri aeg online alla minutiga.",
+  },
+};
+
+export function localizedHead(lang: Lang) {
+  const copy = HEAD_COPY[lang];
+  const url = `${SITE}${LANG_PATH[lang]}`;
+  const ogLocale = { en: "en_US", ru: "ru_RU", et: "et_EE" }[lang];
+  return {
+    meta: [
+      { title: copy.title },
+      { name: "description", content: copy.description },
+      { property: "og:title", content: copy.title },
+      { property: "og:description", content: copy.description },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: url },
+      { property: "og:locale", content: ogLocale },
+      { property: "og:image", content: `${SITE}/og-image.jpg` },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: `${SITE}/og-image.jpg` },
+    ],
+    links: [
+      { rel: "canonical", href: url },
+      { rel: "alternate", hrefLang: "en", href: `${SITE}/` },
+      { rel: "alternate", hrefLang: "ru", href: `${SITE}/ru` },
+      { rel: "alternate", hrefLang: "et", href: `${SITE}/et` },
+      { rel: "alternate", hrefLang: "x-default", href: `${SITE}/` },
+    ],
+  };
+}
+
 
 const PHONE = "+372 57476733";
 const PHONE_HREF = "tel:+37257476733";
