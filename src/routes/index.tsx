@@ -154,8 +154,12 @@ function calcCost(size: string, carType: string): number {
   return base;
 }
 
-function Index() {
-  const [lang, setLang] = useState<Lang>("en");
+export function HomePage({ initialLang }: { initialLang: Lang }) {
+  const [lang, setLang] = useState<Lang>(initialLang);
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
+
   const t = translations[lang];
   const x = extras[lang];
 
