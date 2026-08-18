@@ -357,11 +357,12 @@ export function HomePage({ initialLang }: { initialLang: Lang }) {
             <a href="#contacts" className="hover:text-primary transition-colors">{t.nav.contacts}</a>
           </nav>
           <div className="flex items-center gap-1 rounded-full border border-border bg-surface p-1 text-xs">
-            {(["en", "ru", "et"] as Lang[]).map((l) => (
+            {(["ru", "et"] as Lang[]).map((l) => (
               <a
                 key={l}
                 href={LANG_PATH[l]}
                 hrefLang={l}
+                aria-label={LANG_LABEL[l]}
                 onClick={(e) => {
                   e.preventDefault();
                   setLang(l);
@@ -369,13 +370,13 @@ export function HomePage({ initialLang }: { initialLang: Lang }) {
                     window.history.replaceState(null, "", LANG_PATH[l]);
                   }
                 }}
-                className={`px-3 py-1 rounded-full font-semibold uppercase transition-colors ${
+                className={`flex items-center gap-1.5 px-3 py-1 rounded-full font-semibold uppercase transition-colors ${
                   lang === l ? "bg-gradient-brand text-primary-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
+                <span aria-hidden="true">{LANG_FLAG[l]}</span>
                 {l}
               </a>
-
             ))}
           </div>
         </div>
