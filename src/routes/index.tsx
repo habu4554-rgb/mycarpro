@@ -77,10 +77,11 @@ export function localizedHead(lang: Lang) {
     ],
     links: [
       { rel: "canonical", href: url },
-      { rel: "alternate", hreflang: "en", href: `${SITE}/` },
-      { rel: "alternate", hreflang: "ru", href: `${SITE}/ru` },
+      { rel: "alternate", hreflang: "ru", href: `${SITE}/` },
+      { rel: "alternate", hreflang: "en", href: `${SITE}/en` },
       { rel: "alternate", hreflang: "et", href: `${SITE}/et` },
       { rel: "alternate", hreflang: "x-default", href: `${SITE}/` },
+
     ],
   };
 }
