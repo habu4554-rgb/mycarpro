@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RuRouteImport } from './routes/ru'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as EtRouteImport } from './routes/et'
@@ -17,6 +18,11 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiPublicBookingEmailRouteImport } from './routes/api/public/booking-email'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RuRoute = RuRouteImport.update({
   id: '/ru',
   path: '/ru',
@@ -60,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/et': typeof EtRoute
   '/reset-password': typeof ResetPasswordRoute
   '/ru': typeof RuRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/public/booking-email': typeof ApiPublicBookingEmailRoute
 }
 export interface FileRoutesByTo {
@@ -69,6 +76,7 @@ export interface FileRoutesByTo {
   '/et': typeof EtRoute
   '/reset-password': typeof ResetPasswordRoute
   '/ru': typeof RuRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/public/booking-email': typeof ApiPublicBookingEmailRoute
 }
 export interface FileRoutesById {
@@ -79,6 +87,7 @@ export interface FileRoutesById {
   '/et': typeof EtRoute
   '/reset-password': typeof ResetPasswordRoute
   '/ru': typeof RuRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/public/booking-email': typeof ApiPublicBookingEmailRoute
 }
 export interface FileRouteTypes {
@@ -90,6 +99,7 @@ export interface FileRouteTypes {
     | '/et'
     | '/reset-password'
     | '/ru'
+    | '/sitemap.xml'
     | '/api/public/booking-email'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -99,6 +109,7 @@ export interface FileRouteTypes {
     | '/et'
     | '/reset-password'
     | '/ru'
+    | '/sitemap.xml'
     | '/api/public/booking-email'
   id:
     | '__root__'
@@ -108,6 +119,7 @@ export interface FileRouteTypes {
     | '/et'
     | '/reset-password'
     | '/ru'
+    | '/sitemap.xml'
     | '/api/public/booking-email'
   fileRoutesById: FileRoutesById
 }
@@ -118,11 +130,19 @@ export interface RootRouteChildren {
   EtRoute: typeof EtRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   RuRoute: typeof RuRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ApiPublicBookingEmailRoute: typeof ApiPublicBookingEmailRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ru': {
       id: '/ru'
       path: '/ru'
@@ -182,6 +202,7 @@ const rootRouteChildren: RootRouteChildren = {
   EtRoute: EtRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   RuRoute: RuRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   ApiPublicBookingEmailRoute: ApiPublicBookingEmailRoute,
 }
 export const routeTree = rootRouteImport
