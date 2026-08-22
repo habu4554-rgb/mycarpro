@@ -35,7 +35,7 @@ export const Route = createFileRoute("/")({
   head: () => localizedHead("ru"),
 });
 
-const SITE = "https://mycarpro.ee";
+const SITE = "https://www.mycarpro.ee";
 
 export const LANG_PATH: Record<Lang, string> = { en: "/en", ru: "/", et: "/et" };
 
@@ -366,13 +366,6 @@ export function HomePage({ initialLang }: { initialLang: Lang }) {
                 href={LANG_PATH[l]}
                 hrefLang={l}
                 aria-label={LANG_LABEL[l]}
-                onClick={(e) => {
-                  e.preventDefault();
-                  setLang(l);
-                  if (typeof window !== "undefined") {
-                    window.history.replaceState(null, "", LANG_PATH[l]);
-                  }
-                }}
                 className={`flex items-center gap-1.5 px-3 py-1 rounded-full font-semibold uppercase transition-colors ${
                   lang === l ? "bg-gradient-brand text-primary-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
